@@ -8,29 +8,7 @@ final cell = StoryCell(
       //   'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       //   meadiaType: MediaType.video,
       // ),
-      Story(
-        url: 'http://212.112.103.210:8085/stories/attachment/16',
-        actionButton: StoryActionButton(onTap: () => print('Test')),
-        duration: const Duration(milliseconds: 5000),
-      ),
-      Story(
-        url: 'http://212.112.103.210:8085/stories/attachment/18',
-        duration: const Duration(milliseconds: 2001),
-      ),
-      Story(
-        url: 'http://212.112.103.210:8085/stories/attachment/19',
-        actionButton: StoryActionButton(onTap: () => print('Test')),
-        duration: const Duration(milliseconds: 3002),
-      ),
-      Story(
-        url: 'http://212.112.103.210:8085/stories/attachment/20',
-        actionButton: StoryActionButton(onTap: () => print('Test')),
-        duration: const Duration(milliseconds: 4003),
-      ),
-      Story(
-        url: 'http://212.112.103.210:8085/stories/attachment/21',
-        duration: const Duration(milliseconds: 5004),
-      ),
+
       Story(
         url:
             'https://github.com/libgit2/libgit2sharp/raw/master/square-logo.png',
@@ -94,36 +72,11 @@ final cell1 = StoryCell(
         meadiaType: MediaType.video,
       ),
     ]);
-final cell2 = StoryCell(
-    watched: false,
-    iconUrl: 'http://212.112.103.210:8085/stories/attachment/19',
-    stories: [
-      Story(
-        url: 'http://212.112.103.210:8085/stories/attachment/19',
-      ),
-    ]);
-
-final cell3 = StoryCell(
-    watched: false,
-    iconUrl: 'http://212.112.103.210:8085/stories/attachment/18',
-    stories: [
-      Story(
-        url: 'http://212.112.103.210:8085/stories/attachment/18',
-      ),
-    ]);
-
-final cell4 = StoryCell(
-    watched: false,
-    iconUrl: 'http://212.112.103.210:8085/stories/attachment/21',
-    stories: [
-      Story(
-        url: 'http://212.112.103.210:8085/stories/attachment/21',
-      ),
-    ]);
 
 final cell5 = StoryCell(
     watched: false,
-    iconUrl: 'http://212.112.103.210:8085/stories/attachment/21',
+    iconUrl:
+        'https://github.com/libgit2/libgit2sharp/raw/master/square-logo.png',
     stories: [
       Story(
         url:
