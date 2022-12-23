@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/story_screen.dart';
+import 'package:stories/src/widgets/story_animation.dart';
 import 'package:stories/src/widgets/swipe.dart';
 import 'package:stories/stories.dart';
 
@@ -40,6 +42,7 @@ class _StoriesState extends State<Stories> {
   late PageController _pageController;
 
   late int _currentPage;
+  List<GlobalKey> keys = [];
 
   void onPageComplete() {
     if (_pageController.page == widget.cells.length - 1) {
@@ -48,6 +51,7 @@ class _StoriesState extends State<Stories> {
         Navigator.of(context).pop();
       }
     }
+
     for (var controller in _storyControllers) {
       if (controller.status != null && !controller.status!.isClosed) {
         controller.status?.add(PlaybackState.reset);
@@ -67,6 +71,10 @@ class _StoriesState extends State<Stories> {
         List.generate(widget.cells.length, (index) => StoryController(index));
 
     _pageController = PageController();
+
+    for (int i = 0; i < widget.cells.length; i++) {
+      keys.add(GlobalKey());
+    }
   }
 
   @override
@@ -109,8 +117,8 @@ class _StoriesState extends State<Stories> {
     Navigator.push(
       context,
       PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionDuration: const Duration(milliseconds: 600),
+          reverseTransitionDuration: const Duration(milliseconds: 600),
           pageBuilder: (context, animation, secondaryAnimation) => StorySwipe(
                 statusBarColor: widget.statusBarColor,
                 cells: widget.cells,
@@ -125,11 +133,17 @@ class _StoriesState extends State<Stories> {
                 timeoutWidget: widget.timeoutWidget ?? const SizedBox(),
               ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: animation.drive(Tween<Offset>(
-                      begin: const Offset(0, 1), end: const Offset(0, 0))
-                  .chain(CurveTween(curve: Curves.easeInOut))),
-              child: child,
+            if (animation.isCompleted) {
+              return child;
+            }
+            return StoryAnimation(
+              storyCell: widget.cells[initialPage],
+              cells: widget.cells,
+              index: initialPage,
+              cellHeight: widget.cellHeight,
+              cellWidht: widget.cellWidht,
+              cellKey: keys[initialPage],
+              animation: animation,
             );
           }),
     );
@@ -138,7 +152,7 @@ class _StoriesState extends State<Stories> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.cellHeight ?? 70,
+      height: widget.cellHeight ?? 80,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: widget.cells.length,
@@ -148,31 +162,60 @@ class _StoriesState extends State<Stories> {
               _onStorySwipeClicked(index);
             },
             child: Padding(
+              key: keys[index],
               padding: const EdgeInsets.all(5.0).copyWith(
                   left: index == 0 ? 16 : 5,
                   right: index == widget.cells.length - 1 ? 16 : 5),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  imageUrl: widget.cells[index].iconUrl,
-                  errorWidget: (context, url, error) {
-                    return Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        color: Colors.black);
-                  },
-                  imageBuilder: (context, imageProvider) {
-                    return Container(
-                      width: widget.cellWidht ?? 70,
-                      height: widget.cellHeight ?? 70,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  },
+              child: Container(
+                width: widget.cellWidht != null ? widget.cellWidht! + 10.0 : 80,
+                height:
+                    widget.cellHeight != null ? widget.cellHeight! + 10.0 : 80,
+                padding: const EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFF4C43C),
+                      Color(0xFF2AB67C),
+                    ],
+                  ),
+                ),
+                child: Container(
+                  width: widget.cellWidht != null ? widget.cellWidht! + 9 : 79,
+                  height:
+                      widget.cellHeight != null ? widget.cellHeight! + 9 : 79,
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.cells[index].iconUrl,
+                      errorWidget: (context, url, error) {
+                        return Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: Colors.black);
+                      },
+                      imageBuilder: (context, imageProvider) {
+                        return Container(
+                          width: widget.cellWidht ?? 70,
+                          height: widget.cellHeight ?? 70,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),
