@@ -30,7 +30,19 @@ class HomeScreen extends StatelessWidget {
           //   ),
           // )
           child: Stories(
-            cells: [cell, cell1, cell5],
+            cells: [
+              cell,
+              cell1,
+              cell5,
+              cell6,
+              cell7,
+              cell8,
+              cell9,
+              cell10,
+              cell11,
+              cell12,
+              cell13
+            ],
           ),
         ),
       ),
