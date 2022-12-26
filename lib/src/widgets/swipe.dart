@@ -18,8 +18,10 @@ class StorySwipe extends StatefulWidget {
   final PageController pageController;
   final StoriesController storiesController;
   final Function(int id, int storyId)? onWatched;
-  final VoidCallback onPageComplete;
+  final Function(int index) onPageComplete;
   final Color? statusBarColor;
+  final List<GlobalKey> keys;
+  final Function(int index) scrollToItem;
 
   const StorySwipe({
     Key? key,
@@ -34,6 +36,8 @@ class StorySwipe extends StatefulWidget {
     required this.onPageComplete,
     this.statusBarColor,
     this.onWatched,
+    required this.keys,
+    required this.scrollToItem,
   }) : super(key: key);
 
   @override
@@ -63,6 +67,8 @@ class _StorySwipeState extends State<StorySwipe> {
         timeout: widget.timeout,
         timeoutWidget: widget.timeoutWidget,
         exitButton: widget.exitButton,
+        keys: widget.keys,
+        scrollToItem: widget.scrollToItem,
       ),
     );
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -95,11 +101,11 @@ class _StorySwipeState extends State<StorySwipe> {
 
   @override
   Widget build(BuildContext context) {
-    var statusBarHeight = MediaQuery.of(context).padding.top;
-    if (statusBarHeight <= 24) {
-      statusBarHeight = 0;
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    }
+    // var statusBarHeight = MediaQuery.of(context).padding.top;
+    // if (statusBarHeight <= 24) {
+    //   statusBarHeight = 0;
+    //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    // }
     return Material(
       color: Colors.black,
       child: ScrollConfiguration(

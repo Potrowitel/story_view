@@ -8,7 +8,6 @@ class StoryListen extends ChangeNotifier {
   int _currentStory = 0;
 
   bool mounted = true;
-
   StoryListen(this._stories, this._currentStory);
 
   List<StoryReady> get stories => _stories;

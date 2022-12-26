@@ -17,13 +17,15 @@ class StoryScreen extends StatefulWidget {
   final StoriesController storiesController;
   final int initialPage;
   final int initialStory;
-  final VoidCallback? onComplete;
+  final Function(int index)? onComplete;
   final Widget? timeoutWidget;
   final int? timeout;
   final bool exitButton;
   final bool isRepeat;
   final bool isOpen;
   final Function(int id)? onWatched;
+  final List<GlobalKey>? keys;
+  final Function(int index)? scrollToItem;
 
   const StoryScreen({
     Key? key,
@@ -40,6 +42,8 @@ class StoryScreen extends StatefulWidget {
     this.onComplete,
     this.isOpen = false,
     this.onWatched,
+    this.keys,
+    this.scrollToItem,
   }) : super(key: key);
 
   @override
@@ -156,7 +160,7 @@ class _StoryScreenState extends State<StoryScreen>
         _storyListen.changePage(id: 0);
         _pageController.jumpToPage(0);
       } else {
-        widget.onComplete?.call();
+        widget.onComplete!(widget.id);
       }
     } else {
       _storyListen.pageIncrement();
@@ -204,6 +208,7 @@ class _StoryScreenState extends State<StoryScreen>
         onPanUpdate: (details) {
           if (!widget.isOpen) {
             if (details.delta.dy > 15) {
+              widget.scrollToItem!(widget.id);
               Navigator.of(context).pop();
             }
           }
@@ -237,9 +242,10 @@ class _StoryScreenState extends State<StoryScreen>
                       timeoutWidget: widget.timeoutWidget,
                       onProcess: (process) {
                         _storyListen.changeValue(
-                            id: process.id,
-                            status: process.status,
-                            duration: process.duration);
+                          id: process.id,
+                          status: process.status,
+                          duration: process.duration,
+                        );
                       },
                       // onLoading: (id) {
                       //   _storyListen.changeValue(
@@ -327,7 +333,11 @@ class _StoryScreenState extends State<StoryScreen>
                     right: 5,
                     top: 50 + MediaQuery.of(context).padding.top,
                     child: InkWell(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () {
+                        debugPrint('${widget.id}');
+                        widget.scrollToItem!(widget.id);
+                        Navigator.of(context).pop();
+                      },
                       child: Container(
                         width: 50,
                         height: 50,

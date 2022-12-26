@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/story_screen.dart';
 import 'package:stories/src/widgets/story_animation.dart';
@@ -40,14 +40,16 @@ class _StoriesState extends State<Stories> {
   late List<StoryController> _storyControllers;
   late StoriesController _storiesController;
   late PageController _pageController;
+  final ItemScrollController _itemScrollController = ItemScrollController();
 
   late int _currentPage;
   List<GlobalKey> keys = [];
 
-  void onPageComplete() {
+  void onPageComplete(int index) {
     if (_pageController.page == widget.cells.length - 1) {
       if (!mounted) return;
       if (Navigator.canPop(context)) {
+        scrollToItem(index);
         Navigator.of(context).pop();
       }
     }
@@ -59,6 +61,10 @@ class _StoriesState extends State<Stories> {
     }
     _pageController.nextPage(
         duration: const Duration(milliseconds: 300), curve: Curves.linear);
+  }
+
+  void scrollToItem(int index) {
+    _itemScrollController.jumpTo(index: index, alignment: 0.5);
   }
 
   @override
@@ -117,8 +123,8 @@ class _StoriesState extends State<Stories> {
     Navigator.push(
       context,
       PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 600),
-          reverseTransitionDuration: const Duration(milliseconds: 600),
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
           pageBuilder: (context, animation, secondaryAnimation) => StorySwipe(
                 statusBarColor: widget.statusBarColor,
                 cells: widget.cells,
@@ -131,6 +137,8 @@ class _StoriesState extends State<Stories> {
                 pageController: _pageController,
                 storiesController: _storiesController,
                 timeoutWidget: widget.timeoutWidget ?? const SizedBox(),
+                keys: keys,
+                scrollToItem: scrollToItem,
               ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             if (animation.isCompleted) {
@@ -139,10 +147,10 @@ class _StoriesState extends State<Stories> {
             return StoryAnimation(
               storyCell: widget.cells[initialPage],
               cells: widget.cells,
-              index: initialPage,
+              index: _storiesController.id!,
               cellHeight: widget.cellHeight,
               cellWidht: widget.cellWidht,
-              cellKey: keys[initialPage],
+              cellKey: keys,
               animation: animation,
             );
           }),
@@ -153,7 +161,8 @@ class _StoriesState extends State<Stories> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: widget.cellHeight ?? 80,
-      child: ListView.builder(
+      child: ScrollablePositionedList.builder(
+        itemScrollController: _itemScrollController,
         scrollDirection: Axis.horizontal,
         itemCount: widget.cells.length,
         itemBuilder: (context, index) {
@@ -162,26 +171,31 @@ class _StoriesState extends State<Stories> {
               _onStorySwipeClicked(index);
             },
             child: Padding(
-              key: keys[index],
               padding: const EdgeInsets.all(5.0).copyWith(
                   left: index == 0 ? 16 : 5,
                   right: index == widget.cells.length - 1 ? 16 : 5),
               child: Container(
+                key: keys[index],
                 width: widget.cellWidht != null ? widget.cellWidht! + 10.0 : 80,
                 height:
                     widget.cellHeight != null ? widget.cellHeight! + 10.0 : 80,
                 padding: const EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFFF4C43C),
-                      Color(0xFF2AB67C),
-                    ],
-                  ),
-                ),
+                decoration: widget.cells[index].watched
+                    ? BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: const Color(0xFFB6BCC3).withOpacity(0.5),
+                      )
+                    : BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFF4C43C),
+                            Color(0xFF2AB67C),
+                          ],
+                        ),
+                      ),
                 child: Container(
                   width: widget.cellWidht != null ? widget.cellWidht! + 9 : 79,
                   height:
