@@ -24,7 +24,6 @@ class StoryScreen extends StatefulWidget {
   final bool isRepeat;
   final bool isOpen;
   final Function(int id)? onWatched;
-  final List<GlobalKey>? keys;
   final Function(int index)? scrollToItem;
 
   const StoryScreen({
@@ -42,7 +41,6 @@ class StoryScreen extends StatefulWidget {
     this.onComplete,
     this.isOpen = false,
     this.onWatched,
-    this.keys,
     this.scrollToItem,
   }) : super(key: key);
 
@@ -334,7 +332,6 @@ class _StoryScreenState extends State<StoryScreen>
                     top: 50 + MediaQuery.of(context).padding.top,
                     child: InkWell(
                       onTap: () {
-                        debugPrint('${widget.id}');
                         widget.scrollToItem!(widget.id);
                         Navigator.of(context).pop();
                       },

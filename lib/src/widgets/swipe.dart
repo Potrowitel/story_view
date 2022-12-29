@@ -20,7 +20,7 @@ class StorySwipe extends StatefulWidget {
   final Function(int id, int storyId)? onWatched;
   final Function(int index) onPageComplete;
   final Color? statusBarColor;
-  final List<GlobalKey> keys;
+
   final Function(int index) scrollToItem;
 
   const StorySwipe({
@@ -36,7 +36,6 @@ class StorySwipe extends StatefulWidget {
     required this.onPageComplete,
     this.statusBarColor,
     this.onWatched,
-    required this.keys,
     required this.scrollToItem,
   }) : super(key: key);
 
@@ -67,7 +66,6 @@ class _StorySwipeState extends State<StorySwipe> {
         timeout: widget.timeout,
         timeoutWidget: widget.timeoutWidget,
         exitButton: widget.exitButton,
-        keys: widget.keys,
         scrollToItem: widget.scrollToItem,
       ),
     );

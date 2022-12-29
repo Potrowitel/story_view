@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/story_screen.dart';
 import 'package:stories/src/widgets/story_animation.dart';
@@ -40,10 +40,14 @@ class _StoriesState extends State<Stories> {
   late List<StoryController> _storyControllers;
   late StoriesController _storiesController;
   late PageController _pageController;
-  final ItemScrollController _itemScrollController = ItemScrollController();
 
+  final ScrollController _scrollController = ScrollController();
+  late final ListObserverController _observerController;
+  final GlobalKey _key = GlobalKey();
   late int _currentPage;
-  List<GlobalKey> keys = [];
+  late double x;
+  int currentItemIndex = 0;
+  late double countItemOnScreen;
 
   void onPageComplete(int index) {
     if (_pageController.page == widget.cells.length - 1) {
@@ -64,7 +68,32 @@ class _StoriesState extends State<Stories> {
   }
 
   void scrollToItem(int index) {
-    _itemScrollController.jumpTo(index: index, alignment: 0.5);
+    double itemWidth =
+        (MediaQuery.of(context).size.width - widget.cellWidht! + 7) * 0.00001 +
+            widget.cellWidht! -
+            6;
+    countItemOnScreen = MediaQuery.of(context).size.width / (itemWidth + 10);
+    double offset = (itemWidth + 10) * _storiesController.id!;
+    double left = offset / MediaQuery.of(context).size.width;
+    if (currentItemIndex <= _storiesController.id! &&
+        _storiesController.id! < countItemOnScreen + currentItemIndex) {
+      return;
+    } else if (_storiesController.id! >= widget.cells.length - 2) {
+      _scrollController.jumpTo(offset - 2 * itemWidth);
+      x = (widget.cellWidht! +
+          42 -
+          (offset - 2 * itemWidth) -
+          13 +
+          (_storiesController.id! - 1) * 75 * 0.9999);
+    } else {
+      _scrollController.jumpTo(offset);
+
+      x = (widget.cellWidht! +
+          42 -
+          offset -
+          13 +
+          (_storiesController.id! - 1) * 75 * 0.9999);
+    }
   }
 
   @override
@@ -73,22 +102,29 @@ class _StoriesState extends State<Stories> {
     _currentPage = 0;
     _storiesController = StoriesController();
 
+    _observerController = ListObserverController(controller: _scrollController);
+
+    _scrollController.addListener(() {
+      offsetListener();
+    });
+
     _storyControllers =
         List.generate(widget.cells.length, (index) => StoryController(index));
 
     _pageController = PageController();
-
-    for (int i = 0; i < widget.cells.length; i++) {
-      keys.add(GlobalKey());
-    }
   }
 
   @override
   void dispose() {
     _pageController.removeListener(pageListener);
+    _scrollController.removeListener(offsetListener);
     _pageController.dispose();
     _storiesController.dispose();
     super.dispose();
+  }
+
+  void offsetListener() {
+    currentItemIndex = ((_scrollController.offset + 10) / 75).floor();
   }
 
   void pageListener() {
@@ -120,11 +156,21 @@ class _StoriesState extends State<Stories> {
     _pageController.addListener(pageListener);
     _storiesController.setPage(_currentPage);
     _storiesController.init = true;
+
+    RenderBox box = _key.currentContext?.findRenderObject() as RenderBox;
+
+    var position = box.localToGlobal(Offset.zero);
+    var y = position.dy;
+    x = (widget.cellWidht! +
+        42 -
+        _scrollController.offset -
+        13 +
+        (_storiesController.id! - 1) * 75 * 0.9999);
     Navigator.push(
       context,
       PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionDuration: const Duration(seconds: 3),
+          reverseTransitionDuration: const Duration(seconds: 3),
           pageBuilder: (context, animation, secondaryAnimation) => StorySwipe(
                 statusBarColor: widget.statusBarColor,
                 cells: widget.cells,
@@ -137,7 +183,6 @@ class _StoriesState extends State<Stories> {
                 pageController: _pageController,
                 storiesController: _storiesController,
                 timeoutWidget: widget.timeoutWidget ?? const SizedBox(),
-                keys: keys,
                 scrollToItem: scrollToItem,
               ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -150,8 +195,10 @@ class _StoriesState extends State<Stories> {
               index: _storiesController.id!,
               cellHeight: widget.cellHeight,
               cellWidht: widget.cellWidht,
-              cellKey: keys,
+              dy: y,
+              dx: x,
               animation: animation,
+              scrollController: _scrollController,
             );
           }),
     );
@@ -161,80 +208,90 @@ class _StoriesState extends State<Stories> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: widget.cellHeight ?? 80,
-      child: ScrollablePositionedList.builder(
-        itemScrollController: _itemScrollController,
-        scrollDirection: Axis.horizontal,
-        itemCount: widget.cells.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              _onStorySwipeClicked(index);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(5.0).copyWith(
-                  left: index == 0 ? 16 : 5,
-                  right: index == widget.cells.length - 1 ? 16 : 5),
-              child: Container(
-                key: keys[index],
-                width: widget.cellWidht != null ? widget.cellWidht! + 10.0 : 80,
-                height:
-                    widget.cellHeight != null ? widget.cellHeight! + 10.0 : 80,
-                padding: const EdgeInsets.all(1),
-                decoration: widget.cells[index].watched
-                    ? BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: const Color(0xFFB6BCC3).withOpacity(0.5),
-                      )
-                    : BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xFFF4C43C),
-                            Color(0xFF2AB67C),
-                          ],
+      child: ListViewObserver(
+        controller: _observerController,
+        child: ListView.builder(
+          key: _key,
+          controller: _scrollController,
+          scrollDirection: Axis.horizontal,
+          itemCount: widget.cells.length,
+          itemBuilder: (context, index) {
+            return Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    _onStorySwipeClicked(index);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0).copyWith(
+                        left: index == 0 ? 16 : 5,
+                        right: index == widget.cells.length - 1 ? 16 : 5),
+                    child: Container(
+                      width: widget.cellWidht != null ? widget.cellWidht! : 80,
+                      height:
+                          widget.cellHeight != null ? widget.cellHeight! : 80,
+                      padding: const EdgeInsets.all(1),
+                      decoration: widget.cells[index].watched
+                          ? BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: const Color(0xFFB6BCC3).withOpacity(0.5),
+                            )
+                          : BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color(0xFFF4C43C),
+                                  Color(0xFF2AB67C),
+                                ],
+                              ),
+                            ),
+                      child: Container(
+                        width:
+                            widget.cellWidht != null ? widget.cellWidht! : 79,
+                        height:
+                            widget.cellHeight != null ? widget.cellHeight! : 79,
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CachedNetworkImage(
+                            imageUrl: widget.cells[index].iconUrl,
+                            errorWidget: (context, url, error) {
+                              return Container(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  color: Colors.black);
+                            },
+                            imageBuilder: (context, imageProvider) {
+                              return Container(
+                                width: widget.cellWidht ?? 70,
+                                height: widget.cellHeight ?? 70,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
-                child: Container(
-                  width: widget.cellWidht != null ? widget.cellWidht! + 9 : 79,
-                  height:
-                      widget.cellHeight != null ? widget.cellHeight! + 9 : 79,
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: CachedNetworkImage(
-                      imageUrl: widget.cells[index].iconUrl,
-                      errorWidget: (context, url, error) {
-                        return Container(
-                            width: double.infinity,
-                            height: double.infinity,
-                            color: Colors.black);
-                      },
-                      imageBuilder: (context, imageProvider) {
-                        return Container(
-                          width: widget.cellWidht ?? 70,
-                          height: widget.cellHeight ?? 70,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
-                      },
                     ),
                   ),
                 ),
-              ),
-            ),
-          );
-        },
+                Text('$index'),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
