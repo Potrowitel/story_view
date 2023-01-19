@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:scrollview_observer/scrollview_observer.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/models/stoty_size.dart';
 import 'package:stories/src/story_screen.dart';
@@ -55,7 +54,6 @@ class _StoriesState extends State<Stories> {
   late PageController _pageController;
 
   final ScrollController _scrollController = ScrollController();
-  late final ListObserverController _observerController;
   final GlobalKey _key = GlobalKey();
   late int _currentPage;
   late double x;
@@ -120,9 +118,6 @@ class _StoriesState extends State<Stories> {
     super.initState();
     _currentPage = 0;
     _storiesController = StoriesController();
-
-    _observerController = ListObserverController(controller: _scrollController);
-
     _scrollController.addListener(() {
       offsetListener();
     });
@@ -248,8 +243,8 @@ class _StoriesState extends State<Stories> {
 
   @override
   Widget build(BuildContext context) {
-    return ListViewObserver(
-      controller: _observerController,
+    return SizedBox(
+      height: widget.cellHeight,
       child: ListView.builder(
         key: _key,
         controller: _scrollController,
