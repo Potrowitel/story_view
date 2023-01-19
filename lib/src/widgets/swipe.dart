@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/helper/behavior_helper.dart';
 import 'package:stories/src/models/story.dart';
+import 'package:stories/src/models/stoty_size.dart';
 import 'package:stories/src/story_screen.dart';
 import 'package:vector_math/vector_math.dart' as rad;
 
@@ -20,6 +21,7 @@ class StorySwipe extends StatefulWidget {
   final Function(int id, int storyId)? onWatched;
   final Function(int index) onPageComplete;
   final Color? statusBarColor;
+  final StorySizeModel sizeModel;
 
   final Function(int index) scrollToItem;
 
@@ -37,6 +39,7 @@ class StorySwipe extends StatefulWidget {
     this.statusBarColor,
     this.onWatched,
     required this.scrollToItem,
+    required this.sizeModel,
   }) : super(key: key);
 
   @override
@@ -67,6 +70,7 @@ class _StorySwipeState extends State<StorySwipe> {
         timeoutWidget: widget.timeoutWidget,
         exitButton: widget.exitButton,
         scrollToItem: widget.scrollToItem,
+        sizeModel: widget.sizeModel,
       ),
     );
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -105,7 +109,7 @@ class _StorySwipeState extends State<StorySwipe> {
     //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     // }
     return Material(
-      color: Colors.black,
+      color: Colors.transparent,
       child: ScrollConfiguration(
         behavior: MyBehavior(),
         child: PageView.builder(
@@ -156,8 +160,9 @@ class _SwipeWidget extends StatelessWidget {
     transform.setEntry(3, 2, 0.001);
     transform.rotateY(-rad.radians(rotationY!));
     return Transform(
-        alignment: isLeaving ? Alignment.centerRight : Alignment.centerLeft,
-        transform: transform,
-        child: child);
+      alignment: isLeaving ? Alignment.centerRight : Alignment.centerLeft,
+      transform: transform,
+      child: child,
+    );
   }
 }

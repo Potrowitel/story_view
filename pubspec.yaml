@@ -16,7 +16,6 @@ dependencies:
   cached_network_image: ^3.1.0
   scrollview_observer: ^1.9.1
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

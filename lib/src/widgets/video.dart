@@ -11,6 +11,7 @@ import 'package:video_player/video_player.dart';
 
 class VideoWidget extends StatefulWidget {
   final int id;
+  final int globalId;
   final Story story;
   final Widget? timeoutWidget;
   final StoryController controller;
@@ -27,6 +28,7 @@ class VideoWidget extends StatefulWidget {
     this.timeout,
     this.loadingWidget,
     Key? key,
+    required this.globalId,
   }) : super(key: key);
 
   @override
@@ -200,44 +202,41 @@ class _VideoWidgetState extends State<VideoWidget> {
               double heightAspect =
                   (_playerController!.value.size.height - height) / height;
 
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          left: -widthAspect * width / 2,
-                          right: -widthAspect * width / 2,
-                          top: -heightAspect * height / 2,
-                          bottom: -heightAspect * height / 2,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            child: AspectRatio(
-                              aspectRatio: _playerController!.value.aspectRatio,
-                              child: VideoPlayer(_playerController!),
-                            ),
+              return Stack(alignment: Alignment.center, children: [
+                ClipRRect(
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        left: -widthAspect * width / 2,
+                        right: -widthAspect * width / 2,
+                        top: -heightAspect * height / 2,
+                        bottom: -heightAspect * height / 2,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          child: AspectRatio(
+                            aspectRatio: _playerController!.value.aspectRatio,
+                            child: VideoPlayer(_playerController!),
                           ),
                         ),
-                        BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                          child: Container(
-                            height: double.infinity,
-                            width: double.infinity,
-                            color: Colors.black.withOpacity(0.3),
-                          ),
+                      ),
+                      BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                        child: Container(
+                          height: double.infinity,
+                          width: double.infinity,
+                          color: Colors.black.withOpacity(0.3),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Center(
-                    child: AspectRatio(
-                      aspectRatio: _playerController!.value.aspectRatio,
-                      child: VideoPlayer(_playerController!),
-                    ),
+                ),
+                Center(
+                  child: AspectRatio(
+                    aspectRatio: _playerController!.value.aspectRatio,
+                    child: VideoPlayer(_playerController!),
                   ),
-                ],
-              );
+                ),
+              ]);
             case StoryStatus.downloading:
               return ValueListenableBuilder<double>(
                 valueListenable: _progressIndicator,

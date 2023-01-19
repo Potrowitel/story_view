@@ -15,6 +15,9 @@ class StoryItem extends StatefulWidget {
   final Widget? timeoutWidget;
   final int? timeout;
   final ValueChanged<StoryProcess> onProcess;
+  final int globalId;
+  final bool isDragg;
+
   // final Function(int id)? onLoading;
   // final Function(int id)? onDownloading;
   // final Function(int id)? onTimeout;
@@ -36,6 +39,8 @@ class StoryItem extends StatefulWidget {
     // this.onDownloading,
     // this.onTimeout,
     Key? key,
+    required this.globalId,
+    required this.isDragg,
   }) : super(key: key);
 
   @override
@@ -46,7 +51,7 @@ class _StoryItemState extends State<StoryItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: Colors.transparent,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -81,20 +86,24 @@ class _StoryItemState extends State<StoryItem> {
             SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: VideoWidget(
-                id: widget.id,
-                key: UniqueKey(),
-                story: widget.story,
-                timeout: widget.timeout,
-                timeoutWidget: widget.timeoutWidget,
-                controller: widget.storyController,
-                loadingWidget: widget.loadingWidget,
-                onProcess: widget.onProcess,
-
-                // onReady: widget.onReady,
-                // onError: widget.onError,
-                // onLoading: widget.onLoading,
-              ),
+              child: widget.isDragg
+                  ? Container(
+                      color: Colors.black54,
+                    )
+                  : VideoWidget(
+                      id: widget.id,
+                      globalId: widget.globalId,
+                      key: UniqueKey(),
+                      story: widget.story,
+                      timeout: widget.timeout,
+                      timeoutWidget: widget.timeoutWidget,
+                      controller: widget.storyController,
+                      loadingWidget: widget.loadingWidget,
+                      onProcess: widget.onProcess,
+                      // onReady: widget.onReady,
+                      // onError: widget.onError,
+                      // onLoading: widget.onLoading,
+                    ),
             ),
         ],
       ),

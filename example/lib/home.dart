@@ -9,29 +9,17 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          //     child: GestureDetector(
-          //   onTap: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) {
-          //           return StoriesOpen(
-          //             cell: cell,
-          //           );
-          //         },
-          //       ),
-          //     );
-          //   },
-          //   child: Container(
-          //     height: 100,
-          //     width: 100,
-          //     color: Colors.amber,
-          //   ),
-          // )
+        child: Padding(
+          padding: const EdgeInsets.only(top: 60),
           child: Stories(
             cellHeight: 95,
             cellWidht: 65,
+            allowBorder: false,
+            // allowAnimation: true,
+            // transitionDuration: Duration.zero,
+            // reverseTransitionDuration: Duration.zero,
+            // imageSwitchDuration: Duration.zero,
+            // reverseImageSwitchDuration: Duration.zero,
             cells: [
               cell,
               cell1,

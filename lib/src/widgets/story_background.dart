@@ -7,9 +7,14 @@ class StoryBackground extends StatelessWidget {
   final Color? gradientStart;
   final Color? gradientEnd;
   final String? url;
-  const StoryBackground(
-      {Key? key, this.type, this.gradientEnd, this.gradientStart, this.url})
-      : super(key: key);
+
+  const StoryBackground({
+    Key? key,
+    this.type,
+    this.gradientEnd,
+    this.gradientStart,
+    this.url,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +33,10 @@ class StoryBackground extends StatelessWidget {
             ))
           : null,
       child: type == StoryBack.image
-          ? CachedNetworkImage(imageUrl: url ?? '')
+          ? CachedNetworkImage(
+              imageUrl: url ?? '',
+              fit: BoxFit.cover,
+            )
           : null,
     );
   }

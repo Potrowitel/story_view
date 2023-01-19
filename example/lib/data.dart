@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:stories/stories.dart';
 
 final cell = StoryCell(
-    iconUrl: 'https://picsum.photos/250?image=9',
+    iconUrl:
+        'http://services.myhalyk.kg/images/stories/dce23ea9-f32b-41a0-b694-c00ce6560187.png',
     watched: false,
     stories: [
       // Story(
@@ -11,14 +13,21 @@ final cell = StoryCell(
 
       Story(
         url:
-            'https://github.com/libgit2/libgit2sharp/raw/master/square-logo.png',
+            'http://services.myhalyk.kg/images/stories/b9c7e09c-e1bd-438b-8452-5616ab8b2888.png',
         actionButton: StoryActionButton(onTap: () => print('Test')),
         duration: const Duration(milliseconds: 6005),
+        gradientStart: const Color(0xFF3660D2),
+        gradientEnd: const Color(0xff008ac1),
+        backType: 'GRADIENT',
       ),
       Story(
-        url: 'https://picsum.photos/250?image=9',
+        url:
+            'https://services.myhalyk.kg/images/stories/e403e94e-f633-4c45-9ba1-67efffa9fb5d.png',
         actionButton: StoryActionButton(onTap: () => print('Test')),
         duration: const Duration(milliseconds: 7006),
+        gradientStart: const Color(0xFFF4C43C),
+        gradientEnd: const Color(0xFF2AB67C),
+        backType: 'GRADIENT',
       ),
       Story(
         url:
@@ -79,12 +88,18 @@ final cell1 = StoryCell(
 
 final cell5 = StoryCell(
     watched: false,
-    iconUrl: 'https://picsum.photos/250?image=9',
+    iconUrl:
+        'http://services.myhalyk.kg/images/stories/b3ae514c-8597-48c5-8a7b-6a4ef5b0acf1.png',
     stories: [
       Story(
         url:
-            'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-        meadiaType: MediaType.video,
+            'http://services.myhalyk.kg/images/stories/9154a751-6c88-453e-ad83-591abea75f21.png',
+        actionButton: StoryActionButton(onTap: () => print('Test')),
+        duration: const Duration(milliseconds: 7006),
+        gradientStart: const Color(0xFFF4C43C),
+        gradientEnd: const Color(0xFF2AB67C),
+        backType: 'GRADIENT',
+        meadiaType: MediaType.image,
       ),
     ]);
 final cell6 = StoryCell(
