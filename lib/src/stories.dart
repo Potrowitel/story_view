@@ -256,87 +256,77 @@ class _StoriesState extends State<Stories> {
         scrollDirection: Axis.horizontal,
         itemCount: widget.cells.length,
         itemBuilder: (context, index) {
-          return Column(
+          return Stack(
+            alignment: Alignment.topCenter,
             children: [
-              Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      _onStorySwipeClicked(index);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0).copyWith(
-                          left: index == 0 ? 16 : 5,
-                          right: index == widget.cells.length - 1 ? 16 : 5),
-                      child: Container(
-                        width:
-                            widget.cellWidht != null ? widget.cellWidht! : 80,
-                        height:
-                            widget.cellHeight != null ? widget.cellHeight! : 80,
-                        padding: const EdgeInsets.all(1),
-                        decoration: widget.allowBorder
-                            ? widget.cells[index].watched
-                                ? BoxDecoration(
-                                    borderRadius: BorderRadius.circular(13),
-                                    color: const Color(0xFFB6BCC3)
-                                        .withOpacity(0.5),
-                                  )
-                                : BoxDecoration(
-                                    borderRadius: BorderRadius.circular(13),
-                                    gradient: const LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Color(0xFFF4C43C),
-                                        Color(0xFF2AB67C),
-                                      ],
-                                    ),
-                                  )
-                            : null,
-                        child: Container(
-                          width:
-                              widget.cellWidht != null ? widget.cellWidht! : 79,
-                          height: widget.cellHeight != null
-                              ? widget.cellHeight!
-                              : 79,
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: CachedNetworkImage(
-                              imageUrl: widget.cells[index].iconUrl,
-                              errorWidget: (context, url, error) {
-                                return Container(
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    color: Colors.black);
-                              },
-                              imageBuilder: (context, imageProvider) {
-                                return Container(
-                                  width: widget.cellWidht ?? 70,
-                                  height: widget.cellHeight ?? 70,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+              GestureDetector(
+                onTap: () {
+                  _onStorySwipeClicked(index);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0).copyWith(
+                      left: index == 0 ? 16 : 5,
+                      right: index == widget.cells.length - 1 ? 16 : 5),
+                  child: Container(
+                    width: widget.cellWidht != null ? widget.cellWidht! : 80,
+                    height: widget.cellHeight != null ? widget.cellHeight! : 80,
+                    padding: const EdgeInsets.all(1),
+                    decoration: widget.allowBorder
+                        ? widget.cells[index].watched
+                            ? BoxDecoration(
+                                borderRadius: BorderRadius.circular(13),
+                                color: const Color(0xFFB6BCC3).withOpacity(0.5),
+                              )
+                            : BoxDecoration(
+                                borderRadius: BorderRadius.circular(13),
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFFF4C43C),
+                                    Color(0xFF2AB67C),
+                                  ],
+                                ),
+                              )
+                        : null,
+                    child: Container(
+                      width: widget.cellWidht != null ? widget.cellWidht! : 79,
+                      height:
+                          widget.cellHeight != null ? widget.cellHeight! : 79,
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CachedNetworkImage(
+                          imageUrl: widget.cells[index].iconUrl,
+                          errorWidget: (context, url, error) {
+                            return Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                color: Colors.black);
+                          },
+                          imageBuilder: (context, imageProvider) {
+                            return Container(
+                              width: widget.cellWidht ?? 70,
+                              height: widget.cellHeight ?? 70,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
-              Text('$index'),
             ],
           );
         },
