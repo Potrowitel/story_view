@@ -18,6 +18,7 @@ class VideoWidget extends StatefulWidget {
   final int? timeout;
   final Widget? loadingWidget;
   final ValueChanged<StoryProcess> onProcess;
+  final bool isDraggCancel;
 
   const VideoWidget({
     required this.id,
@@ -29,6 +30,7 @@ class VideoWidget extends StatefulWidget {
     this.loadingWidget,
     Key? key,
     required this.globalId,
+    required this.isDraggCancel,
   }) : super(key: key);
 
   @override
@@ -45,6 +47,7 @@ class _VideoWidgetState extends State<VideoWidget> {
   @override
   void initState() {
     super.initState();
+
     _timeoutListen = TimeoutListen(widget.timeout ?? 30);
     _progressIndicator = ValueNotifier(0);
     _widgetStatuses = ValueNotifier(StoryStatus.init);
@@ -263,10 +266,13 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   @override
   void dispose() {
-    _timeoutListen.removeListener(_timerListener);
-    _playerController?.removeListener(_videoListener);
-    _timeoutListen.cancel();
-    _playerController?.dispose();
+    // print(!widget.isDraggCancel);
+    if (!widget.isDraggCancel) {
+      _timeoutListen.removeListener(_timerListener);
+      _playerController?.removeListener(_videoListener);
+      _timeoutListen.cancel();
+      _playerController?.dispose();
+    }
     super.dispose();
   }
 }

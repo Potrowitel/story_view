@@ -12,10 +12,10 @@ class HomeScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(top: 60),
           child: Stories(
-            cellHeight: 95,
+            cellHeight: 105,
             cellWidht: 65,
-            allowBorder: false,
-            // allowAnimation: true,
+            // allowBorder: true,
+            // allowAnimation: false,
             // transitionDuration: Duration.zero,
             // reverseTransitionDuration: Duration.zero,
             // imageSwitchDuration: Duration.zero,

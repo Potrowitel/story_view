@@ -17,7 +17,7 @@ class StoryItem extends StatefulWidget {
   final ValueChanged<StoryProcess> onProcess;
   final int globalId;
   final bool isDragg;
-
+  final bool isDraggCancel;
   // final Function(int id)? onLoading;
   // final Function(int id)? onDownloading;
   // final Function(int id)? onTimeout;
@@ -41,6 +41,7 @@ class StoryItem extends StatefulWidget {
     Key? key,
     required this.globalId,
     required this.isDragg,
+    required this.isDraggCancel,
   }) : super(key: key);
 
   @override
@@ -100,6 +101,7 @@ class _StoryItemState extends State<StoryItem> {
                       controller: widget.storyController,
                       loadingWidget: widget.loadingWidget,
                       onProcess: widget.onProcess,
+                      isDraggCancel: widget.isDraggCancel,
                       // onReady: widget.onReady,
                       // onError: widget.onError,
                       // onLoading: widget.onLoading,

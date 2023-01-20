@@ -265,11 +265,11 @@ class _StoriesState extends State<Stories> {
                   child: Container(
                     width: widget.cellWidht != null ? widget.cellWidht! : 80,
                     height: widget.cellHeight != null ? widget.cellHeight! : 80,
-                    padding: const EdgeInsets.all(1),
+                    padding: const EdgeInsets.all(2),
                     decoration: widget.allowBorder
                         ? widget.cells[index].watched
                             ? BoxDecoration(
-                                borderRadius: BorderRadius.circular(13),
+                                borderRadius: BorderRadius.circular(14),
                                 color: const Color(0xFFB6BCC3).withOpacity(0.5),
                               )
                             : BoxDecoration(

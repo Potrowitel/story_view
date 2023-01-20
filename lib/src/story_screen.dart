@@ -61,6 +61,7 @@ class _StoryScreenState extends State<StoryScreen>
   double radius = 0;
   late final double mediaWidth;
   late final double mediaHeigth;
+  bool isDraggCancel = false;
   bool isDragg = false;
 
   late double scale;
@@ -248,6 +249,7 @@ class _StoryScreenState extends State<StoryScreen>
                     top: _offset.dy,
                     left: _offset.dx,
                     child: Draggable(
+                      hitTestBehavior: HitTestBehavior.translucent,
                       affinity: Axis.vertical,
                       feedback: const SizedBox.shrink(),
                       onDragUpdate: (details) {
@@ -274,7 +276,9 @@ class _StoryScreenState extends State<StoryScreen>
                         widget.storyController.status?.add(PlaybackState.pause);
                       },
                       onDragEnd: (details) {
-                        if (!widget.isOpen) {
+                        if (details.velocity.pixelsPerSecond.dy > 100 ||
+                            _offset.dy > mediaHeigth / 8) {
+                          isDraggCancel = false;
                           widget.scrollToItem!(_storyListen.currentStory);
                           widget.sizeModel!.id = _storyListen.currentStory;
                           widget.sizeModel!.dx = _offset.dx;
@@ -286,6 +290,16 @@ class _StoryScreenState extends State<StoryScreen>
                           widget.sizeModel!.width =
                               MediaQuery.of(context).size.width * scale;
                           Navigator.of(context).pop();
+                          return;
+                        }
+                        if (_offset.dy < mediaHeigth / 8) {
+                          _offset = Offset.zero;
+                          scale = 1;
+                          isDraggCancel = true;
+                          widget.storyController.status
+                              ?.add(PlaybackState.play);
+                          isDragg = false;
+                          setState(() {});
                         }
                       },
                       child: SizedBox(
@@ -311,6 +325,7 @@ class _StoryScreenState extends State<StoryScreen>
                                         timeout: widget.timeout,
                                         timeoutWidget: widget.timeoutWidget,
                                         isDragg: isDragg,
+                                        isDraggCancel: isDraggCancel,
                                         onProcess: (process) {
                                           _storyListen.changeValue(
                                             id: process.id,

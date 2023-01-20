@@ -99,7 +99,6 @@ final cell5 = StoryCell(
         gradientStart: const Color(0xFFF4C43C),
         gradientEnd: const Color(0xFF2AB67C),
         backType: 'GRADIENT',
-        meadiaType: MediaType.image,
       ),
     ]);
 final cell6 = StoryCell(
