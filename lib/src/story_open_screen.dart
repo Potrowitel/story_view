@@ -13,6 +13,7 @@ class StoriesOpen extends StatefulWidget {
   final bool exitButton;
   final bool isRepeat;
   final Color statusBarColor;
+  final bool allowDragg;
 
   const StoriesOpen({
     Key? key,
@@ -24,6 +25,7 @@ class StoriesOpen extends StatefulWidget {
     this.cellWidht,
     this.isRepeat = true,
     this.exitButton = false,
+    this.allowDragg = false,
   }) : super(key: key);
 
   @override
@@ -75,6 +77,7 @@ class _StoriesOpenState extends State<StoriesOpen> {
         timeoutWidget: widget.timeoutWidget,
         exitButton: widget.exitButton,
         isRepeat: widget.isRepeat,
+        allowDragg: widget.allowDragg,
       ),
     );
   }
