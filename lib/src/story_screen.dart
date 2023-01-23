@@ -278,7 +278,10 @@ class _StoryScreenState extends State<StoryScreen>
                       onDragStarted: () {
                         radius = 32;
                         isDragg = true;
-                        widget.storyController.status?.add(PlaybackState.pause);
+                        if (widget.allowDragg!) {
+                          widget.storyController.status
+                              ?.add(PlaybackState.pause);
+                        }
                       },
                       onDragEnd: (details) {
                         if (details.velocity.pixelsPerSecond.dy > 100 ||
@@ -301,8 +304,10 @@ class _StoryScreenState extends State<StoryScreen>
                           _offset = Offset.zero;
                           scale = 1;
                           isDraggCancel = true;
-                          widget.storyController.status
-                              ?.add(PlaybackState.play);
+                          if (widget.allowDragg!) {
+                            widget.storyController.status
+                                ?.add(PlaybackState.play);
+                          }
                           isDragg = false;
                           setState(() {});
                         }
