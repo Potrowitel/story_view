@@ -22,6 +22,7 @@ class StorySwipe extends StatefulWidget {
   final Function(int index) onPageComplete;
   final Color? statusBarColor;
   final StorySizeModel sizeModel;
+  final bool allowDragg;
 
   final Function(int index) scrollToItem;
 
@@ -40,6 +41,7 @@ class StorySwipe extends StatefulWidget {
     this.onWatched,
     required this.scrollToItem,
     required this.sizeModel,
+    required this.allowDragg,
   }) : super(key: key);
 
   @override
@@ -71,6 +73,7 @@ class _StorySwipeState extends State<StorySwipe> {
         exitButton: widget.exitButton,
         scrollToItem: widget.scrollToItem,
         sizeModel: widget.sizeModel,
+        allowDragg: widget.allowDragg,
       ),
     );
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

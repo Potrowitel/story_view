@@ -23,6 +23,7 @@ class Stories extends StatefulWidget {
   final Duration reverseTransitionDuration;
   final Duration imageSwitchDuration;
   final Duration reverseImageSwitchDuration;
+  final bool allowDragg;
   final Function(int id, int sroryId)? onWatched;
 
   const Stories({
@@ -41,6 +42,7 @@ class Stories extends StatefulWidget {
     this.reverseTransitionDuration = const Duration(milliseconds: 300),
     this.imageSwitchDuration = const Duration(milliseconds: 200),
     this.reverseImageSwitchDuration = const Duration(milliseconds: 200),
+    this.allowDragg = true,
   }) : super(key: key);
 
   @override
@@ -187,8 +189,7 @@ class _StoriesState extends State<Stories> {
       dy: widget.cells[initialPage].stories.first.meadiaType == MediaType.video
           ? 0.0
           : MediaQuery.of(context).viewPadding.top -
-              MediaQuery.of(context).viewPadding.bottom +
-              30,
+              MediaQuery.of(context).viewPadding.bottom,
       dx: 0,
       isOpen: true,
     );
@@ -214,6 +215,7 @@ class _StoriesState extends State<Stories> {
               timeoutWidget: widget.timeoutWidget ?? const SizedBox(),
               scrollToItem: scrollToItem,
               sizeModel: sizeModel,
+              allowDragg: widget.allowDragg,
             );
           },
           transitionsBuilder: (context, animation, secondaryAnimation, child) {

@@ -26,6 +26,7 @@ class StoryScreen extends StatefulWidget {
   final Function(int id)? onWatched;
   final Function(int index)? scrollToItem;
   final StorySizeModel? sizeModel;
+  final bool? allowDragg;
 
   const StoryScreen({
     Key? key,
@@ -44,6 +45,7 @@ class StoryScreen extends StatefulWidget {
     this.onWatched,
     this.scrollToItem,
     this.sizeModel,
+    this.allowDragg,
   }) : super(key: key);
 
   @override
@@ -246,8 +248,8 @@ class _StoryScreenState extends State<StoryScreen>
               return Stack(
                 children: [
                   Positioned(
-                    top: _offset.dy,
-                    left: _offset.dx,
+                    top: widget.allowDragg! ? _offset.dy : 0,
+                    left: widget.allowDragg! ? _offset.dx : 0,
                     child: Draggable(
                       hitTestBehavior: HitTestBehavior.translucent,
                       affinity: Axis.vertical,
@@ -268,6 +270,9 @@ class _StoryScreenState extends State<StoryScreen>
                             offsetPercent = 30;
                           }
                           scale = 1 - offsetPercent / 100;
+                          if (!widget.allowDragg!) {
+                            scale = 1;
+                          }
                         });
                       },
                       onDragStarted: () {

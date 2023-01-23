@@ -24,13 +24,14 @@ class StoryBackground extends StatelessWidget {
               gradientEnd != null
           ? BoxDecoration(
               gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                gradientStart!,
-                gradientEnd!,
-              ],
-            ))
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  gradientStart!,
+                  gradientEnd!,
+                ],
+              ),
+            )
           : null,
       child: type == StoryBack.image
           ? CachedNetworkImage(

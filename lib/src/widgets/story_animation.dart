@@ -75,7 +75,7 @@ class _StoryAnimationState extends State<StoryAnimation>
             begin: widget.cellHeight,
             end: widget.storyCell.stories.first.meadiaType == MediaType.video
                 ? widget.sizeModel.heigth + widget.statusBarHeigth
-                : widget.sizeModel.heigth - 11)
+                : widget.sizeModel.heigth)
         .chain(CurveTween(curve: Curves.easeInOut)));
     widthAnim = widget.animation.drive(
         Tween(begin: widget.cellWidht, end: widget.sizeModel.width)
@@ -179,9 +179,10 @@ class _StoryAnimationState extends State<StoryAnimation>
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(
                                           32 * widget.animation.value),
-                                      child: SizedBox(
-                                        height: height,
+                                      child: Container(
                                         width: width,
+                                        height: height,
+                                        alignment: Alignment.bottomCenter,
                                         child: storyPreview,
                                       ),
                                     ),

@@ -93,11 +93,12 @@ final cell5 = StoryCell(
     stories: [
       Story(
         url:
-            'http://services.myhalyk.kg/images/stories/9154a751-6c88-453e-ad83-591abea75f21.png',
+            'http://testservices.myhalyk.kg/images/stories/b906b028-be98-4f8d-9134-de5c469113f4.png',
         actionButton: StoryActionButton(onTap: () => print('Test')),
         duration: const Duration(milliseconds: 7006),
         gradientStart: const Color(0xFFF4C43C),
         gradientEnd: const Color(0xFF2AB67C),
+        // meadiaType: MediaType.image,
         backType: 'GRADIENT',
       ),
     ]);
