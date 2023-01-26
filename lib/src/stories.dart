@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/models/stoty_size.dart';
 import 'package:stories/src/story_screen.dart';
+import 'package:stories/src/widgets/multitouch.dart';
 import 'package:stories/src/widgets/story_animation.dart';
 import 'package:stories/src/widgets/swipe.dart';
 import 'package:stories/stories.dart';
@@ -203,21 +204,23 @@ class _StoriesState extends State<Stories> {
           transitionDuration: widget.transitionDuration,
           reverseTransitionDuration: widget.reverseTransitionDuration,
           pageBuilder: (context, animation, secondaryAnimation) {
-            return StorySwipe(
-              statusBarColor: widget.statusBarColor,
-              cells: widget.cells,
-              exitButton: widget.exitButton,
-              initialPage: initialPage,
-              onPageComplete: onPageComplete,
-              onWatched: widget.onWatched,
-              storyControllers: _storyControllers,
-              timeout: widget.timeout,
-              pageController: _pageController,
-              storiesController: _storiesController,
-              timeoutWidget: widget.timeoutWidget ?? const SizedBox(),
-              scrollToItem: scrollToItem,
-              sizeModel: sizeModel,
-              allowDragg: widget.allowDragg,
+            return OnlyOnePointerRecognizerWidget(
+              child: StorySwipe(
+                statusBarColor: widget.statusBarColor,
+                cells: widget.cells,
+                exitButton: widget.exitButton,
+                initialPage: initialPage,
+                onPageComplete: onPageComplete,
+                onWatched: widget.onWatched,
+                storyControllers: _storyControllers,
+                timeout: widget.timeout,
+                pageController: _pageController,
+                storiesController: _storiesController,
+                timeoutWidget: widget.timeoutWidget ?? const SizedBox(),
+                scrollToItem: scrollToItem,
+                sizeModel: sizeModel,
+                allowDragg: widget.allowDragg,
+              ),
             );
           },
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
