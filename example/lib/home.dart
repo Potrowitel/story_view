@@ -14,7 +14,8 @@ class HomeScreen extends StatelessWidget {
           child: Stories(
             cellHeight: 105,
             cellWidht: 65,
-            // allowBorder: true,
+            // underBorderColor: Colors.amber,
+            // allowBorder: false,
             // allowAnimation: false,
             // transitionDuration: Duration.zero,
             // reverseTransitionDuration: Duration.zero,

@@ -24,6 +24,7 @@ class Stories extends StatefulWidget {
   final Duration imageSwitchDuration;
   final Duration reverseImageSwitchDuration;
   final bool allowDragg;
+  final Color underBorderColor;
   final Function(int id, int sroryId)? onWatched;
 
   const Stories({
@@ -43,6 +44,7 @@ class Stories extends StatefulWidget {
     this.imageSwitchDuration = const Duration(milliseconds: 200),
     this.reverseImageSwitchDuration = const Duration(milliseconds: 200),
     this.allowDragg = true,
+    this.underBorderColor = Colors.white,
   }) : super(key: key);
 
   @override
@@ -292,7 +294,7 @@ class _StoriesState extends State<Stories> {
                           widget.cellHeight != null ? widget.cellHeight! : 79,
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: widget.underBorderColor,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ClipRRect(

@@ -54,7 +54,7 @@ class StoryScreen extends StatefulWidget {
 }
 
 class _StoryScreenState extends State<StoryScreen>
-    with SingleTickerProviderStateMixin, NavigatorObserver {
+    with SingleTickerProviderStateMixin {
   late PageController _pageController;
   late AnimationController _animationController;
   late StoryListen _storyListen;
@@ -214,23 +214,6 @@ class _StoryScreenState extends State<StoryScreen>
   }
 
   @override
-  void didPop(Route route, Route? previousRoute) {
-    super.didPop(route, previousRoute);
-  }
-
-  @override
-  void didRemove(Route route, Route? previousRoute) {
-    print("cdskvL;vqajdnalkd;vasdv");
-    super.didRemove(route, previousRoute);
-  }
-
-  @override
-  void didStopUserGesture() {
-    print("cdskvL;vqajdnalkd;vasdv");
-    super.didStopUserGesture();
-  }
-
-  @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -293,8 +276,6 @@ class _StoryScreenState extends State<StoryScreen>
                             if (!widget.allowDragg!) {
                               scale = 1;
                             }
-                            print('DY update: ${_offset.dy}');
-                            print('DX update: ${_offset.dx}');
                           });
                         },
                         onDragStarted: () {
@@ -319,8 +300,6 @@ class _StoryScreenState extends State<StoryScreen>
                                 MediaQuery.of(context).size.height * scale;
                             widget.sizeModel!.width =
                                 MediaQuery.of(context).size.width * scale;
-                            print('DY: ${_offset.dy}');
-                            print('DX: ${_offset.dx}');
                             Navigator.of(context).pop();
                             return;
                           }
