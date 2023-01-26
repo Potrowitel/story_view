@@ -14,7 +14,6 @@ class HomeScreen extends StatelessWidget {
           child: Stories(
             cellHeight: 105,
             cellWidht: 65,
-            allowDragg: false,
             // allowBorder: true,
             // allowAnimation: false,
             // transitionDuration: Duration.zero,

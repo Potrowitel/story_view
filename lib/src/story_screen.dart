@@ -8,6 +8,7 @@ import 'package:stories/src/models/story_ready.dart';
 import 'package:stories/src/models/stoty_size.dart';
 import 'package:stories/src/story_listen.dart';
 import 'package:stories/src/widgets/animated_bar.dart';
+import 'package:stories/src/widgets/multitouch.dart';
 import 'package:stories/src/widgets/story_item.dart';
 
 class StoryScreen extends StatefulWidget {
@@ -53,7 +54,7 @@ class StoryScreen extends StatefulWidget {
 }
 
 class _StoryScreenState extends State<StoryScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, NavigatorObserver {
   late PageController _pageController;
   late AnimationController _animationController;
   late StoryListen _storyListen;
@@ -213,6 +214,23 @@ class _StoryScreenState extends State<StoryScreen>
   }
 
   @override
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didRemove(Route route, Route? previousRoute) {
+    print("cdskvL;vqajdnalkd;vasdv");
+    super.didRemove(route, previousRoute);
+  }
+
+  @override
+  void didStopUserGesture() {
+    print("cdskvL;vqajdnalkd;vasdv");
+    super.didStopUserGesture();
+  }
+
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -220,268 +238,280 @@ class _StoryScreenState extends State<StoryScreen>
     ]);
     return Scaffold(
       backgroundColor: const Color(0xFF062030).withOpacity(_opacity),
-      body: GestureDetector(
-        onPanDown: (details) {
-          _fingerOffset = details.globalPosition;
-        },
-        onTapDown: (details) {
-          _fingerOffset = details.globalPosition;
-          widget.storyController.status?.add(PlaybackState.pause);
-        },
-        onTapUp: (details) =>
-            widget.storyController.status?.add(PlaybackState.play),
-        onLongPressStart: (details) =>
-            widget.storyController.status?.add(PlaybackState.pause),
-        onLongPressUp: () =>
-            widget.storyController.status?.add(PlaybackState.play),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          width: mediaWidth,
-          child: PageView.builder(
-            itemCount: widget.stories.length,
-            scrollDirection: Axis.horizontal,
-            allowImplicitScrolling: true,
-            pageSnapping: true,
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Stack(
-                children: [
-                  Positioned(
-                    top: widget.allowDragg! ? _offset.dy : 0,
-                    left: widget.allowDragg! ? _offset.dx : 0,
-                    child: Draggable(
-                      hitTestBehavior: HitTestBehavior.translucent,
-                      affinity: Axis.vertical,
-                      feedback: const SizedBox.shrink(),
-                      onDragUpdate: (details) {
-                        setState(() {
-                          _offset = details.globalPosition - _fingerOffset;
-                          double heightPercent = mediaHeigth / 100;
-                          double offsetPercent = _offset.dy / heightPercent;
-                          if (offsetPercent < 0) {
-                            offsetPercent = 0;
-                          }
-                          _opacity = 0.9 - (1.8 * (offsetPercent / 100));
-                          if (_opacity < 0) {
-                            _opacity = 0;
-                          }
-                          if (offsetPercent > 30) {
-                            offsetPercent = 30;
-                          }
-                          scale = 1 - offsetPercent / 100;
-                          if (!widget.allowDragg!) {
-                            scale = 1;
-                          }
-                        });
-                      },
-                      onDragStarted: () {
-                        radius = 32;
-                        isDragg = true;
-                        if (widget.allowDragg!) {
-                          widget.storyController.status
-                              ?.add(PlaybackState.pause);
-                        }
-                      },
-                      onDragEnd: (details) {
-                        if (details.velocity.pixelsPerSecond.dy > 100 ||
-                            _offset.dy > mediaHeigth / 8) {
-                          isDraggCancel = false;
-                          widget.scrollToItem!(_storyListen.currentStory);
-                          widget.sizeModel!.id = _storyListen.currentStory;
-                          widget.sizeModel!.dx = _offset.dx;
-                          widget.sizeModel!.dy = _offset.dy +
-                              MediaQuery.of(context).viewPadding.top;
-                          widget.sizeModel!.isOpen = false;
-                          widget.sizeModel!.heigth =
-                              MediaQuery.of(context).size.height * scale;
-                          widget.sizeModel!.width =
-                              MediaQuery.of(context).size.width * scale;
-                          Navigator.of(context).pop();
-                          return;
-                        }
-                        if (_offset.dy < mediaHeigth / 8) {
-                          _offset = Offset.zero;
-                          scale = 1;
-                          isDraggCancel = true;
+      body: OnlyOnePointerRecognizerWidget(
+        child: GestureDetector(
+          onPanDown: (details) {
+            _fingerOffset = details.globalPosition;
+          },
+          onTapDown: (details) {
+            _fingerOffset = details.globalPosition;
+            widget.storyController.status?.add(PlaybackState.pause);
+          },
+          onTapUp: (details) =>
+              widget.storyController.status?.add(PlaybackState.play),
+          onLongPressStart: (details) =>
+              widget.storyController.status?.add(PlaybackState.pause),
+          onLongPressUp: () =>
+              widget.storyController.status?.add(PlaybackState.play),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: mediaWidth,
+            child: PageView.builder(
+              itemCount: widget.stories.length,
+              scrollDirection: Axis.horizontal,
+              allowImplicitScrolling: true,
+              pageSnapping: true,
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Stack(
+                  children: [
+                    Positioned(
+                      top: widget.allowDragg! ? _offset.dy : 0,
+                      left: widget.allowDragg! ? _offset.dx : 0,
+                      child: Draggable(
+                        maxSimultaneousDrags: 1,
+                        hitTestBehavior: HitTestBehavior.translucent,
+                        affinity: Axis.vertical,
+                        feedback: const SizedBox.shrink(),
+                        onDragUpdate: (details) {
+                          setState(() {
+                            _offset = details.globalPosition - _fingerOffset;
+                            double heightPercent = mediaHeigth / 100;
+                            double offsetPercent = _offset.dy / heightPercent;
+                            if (offsetPercent < 0) {
+                              offsetPercent = 0;
+                            }
+                            _opacity = 0.9 - (1.8 * (offsetPercent / 100));
+                            if (_opacity < 0) {
+                              _opacity = 0;
+                            }
+                            if (offsetPercent > 30) {
+                              offsetPercent = 30;
+                            }
+                            scale = 1 - offsetPercent / 100;
+                            if (!widget.allowDragg!) {
+                              scale = 1;
+                            }
+                            print('DY update: ${_offset.dy}');
+                            print('DX update: ${_offset.dx}');
+                          });
+                        },
+                        onDragStarted: () {
+                          radius = 32;
+                          isDragg = true;
                           if (widget.allowDragg!) {
                             widget.storyController.status
-                                ?.add(PlaybackState.play);
+                                ?.add(PlaybackState.pause);
                           }
-                          isDragg = false;
-                          setState(() {});
-                        }
-                      },
-                      child: SizedBox(
-                        height: mediaHeigth,
-                        width: mediaWidth,
-                        child: Transform.scale(
-                          scale: scale,
-                          child: Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: <Widget>[
-                              Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(radius),
-                                    child: SizedBox(
-                                      width: mediaWidth,
-                                      height: mediaHeigth,
-                                      child: StoryItem(
-                                        id: index,
-                                        globalId: widget.id,
-                                        storyController: widget.storyController,
-                                        story: widget.stories[index],
-                                        timeout: widget.timeout,
-                                        timeoutWidget: widget.timeoutWidget,
-                                        isDragg: isDragg,
-                                        isDraggCancel: isDraggCancel,
-                                        onProcess: (process) {
-                                          _storyListen.changeValue(
-                                            id: process.id,
-                                            status: process.status,
-                                            duration: process.duration,
-                                          );
-                                        },
-                                        // onLoading: (id) {
-                                        //   _storyListen.changeValue(
-                                        //       id: id, status: StoryStatus.loading);
-                                        //   // print('LOADING');
-                                        // },
-                                        // onReady: (id, duration) async {
-                                        //   _storyListen.changeValue(
-                                        //       id: id,
-                                        //       status: StoryStatus.ready,
-                                        //       duration: duration);
-                                        // if (id == (widget.initialStory) ||
-                                        //     id == (widget.initialStory + 1) ||
-                                        //     id == (widget.initialStory - 1)) {
-                                        //   await Future.delayed(
-                                        //       const Duration(milliseconds: 100));
-                                        //   _storyListen.changeValue(
-                                        //       id: id,
-                                        //       status: StoryStatus.ready,
-                                        //       duration: duration);
-                                        // } else {
-                                        //   _storyListen.changeValue(
-                                        //       id: id,
-                                        //       status: StoryStatus.ready,
-                                        //       duration: duration);
-                                        // }
-                                        // print('READY');
-                                        // },
+                        },
+                        onDragEnd: (details) {
+                          if (details.velocity.pixelsPerSecond.dy > 100 ||
+                              _offset.dy > mediaHeigth / 8) {
+                            isDraggCancel = false;
+                            widget.scrollToItem!(_storyListen.currentStory);
+                            widget.sizeModel!.id = _storyListen.currentStory;
+                            widget.sizeModel!.dx = _offset.dx;
+                            widget.sizeModel!.dy = _offset.dy +
+                                MediaQuery.of(context).viewPadding.top;
+                            widget.sizeModel!.isOpen = false;
+                            widget.sizeModel!.heigth =
+                                MediaQuery.of(context).size.height * scale;
+                            widget.sizeModel!.width =
+                                MediaQuery.of(context).size.width * scale;
+                            print('DY: ${_offset.dy}');
+                            print('DX: ${_offset.dx}');
+                            Navigator.of(context).pop();
+                            return;
+                          }
+                          if (_offset.dy < mediaHeigth / 8) {
+                            _offset = Offset.zero;
+                            scale = 1;
+                            isDraggCancel = true;
+                            if (widget.allowDragg!) {
+                              widget.storyController.status
+                                  ?.add(PlaybackState.play);
+                            }
+                            isDragg = false;
+                            setState(() {});
+                          }
+                        },
+                        child: SizedBox(
+                          height: mediaHeigth,
+                          width: mediaWidth,
+                          child: Transform.scale(
+                            scale: scale,
+                            child: Stack(
+                              alignment: Alignment.bottomCenter,
+                              children: <Widget>[
+                                Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(radius),
+                                      child: SizedBox(
+                                        width: mediaWidth,
+                                        height: mediaHeigth,
+                                        child: StoryItem(
+                                          id: index,
+                                          globalId: widget.id,
+                                          storyController:
+                                              widget.storyController,
+                                          story: widget.stories[index],
+                                          timeout: widget.timeout,
+                                          timeoutWidget: widget.timeoutWidget,
+                                          isDragg: isDragg,
+                                          isDraggCancel: isDraggCancel,
+                                          onProcess: (process) {
+                                            _storyListen.changeValue(
+                                              id: process.id,
+                                              status: process.status,
+                                              duration: process.duration,
+                                            );
+                                          },
+                                          // onLoading: (id) {
+                                          //   _storyListen.changeValue(
+                                          //       id: id, status: StoryStatus.loading);
+                                          //   // print('LOADING');
+                                          // },
+                                          // onReady: (id, duration) async {
+                                          //   _storyListen.changeValue(
+                                          //       id: id,
+                                          //       status: StoryStatus.ready,
+                                          //       duration: duration);
+                                          // if (id == (widget.initialStory) ||
+                                          //     id == (widget.initialStory + 1) ||
+                                          //     id == (widget.initialStory - 1)) {
+                                          //   await Future.delayed(
+                                          //       const Duration(milliseconds: 100));
+                                          //   _storyListen.changeValue(
+                                          //       id: id,
+                                          //       status: StoryStatus.ready,
+                                          //       duration: duration);
+                                          // } else {
+                                          //   _storyListen.changeValue(
+                                          //       id: id,
+                                          //       status: StoryStatus.ready,
+                                          //       duration: duration);
+                                          // }
+                                          // print('READY');
+                                          // },
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 100),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                          behavior: HitTestBehavior.opaque,
-                                          onTap: () => widget
-                                              .storyController.status
-                                              ?.add(PlaybackState.previous),
-                                          child: SizedBox(
-                                            width: mediaWidth / 3,
-                                            height: double.infinity,
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 100),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () => widget
+                                                .storyController.status
+                                                ?.add(PlaybackState.previous),
+                                            child: SizedBox(
+                                              width: mediaWidth / 3,
+                                              height: double.infinity,
+                                            ),
                                           ),
-                                        ),
-                                        GestureDetector(
-                                          behavior: HitTestBehavior.opaque,
-                                          onTap: () => widget
-                                              .storyController.status
-                                              ?.add(PlaybackState.next),
-                                          child: SizedBox(
-                                            width: mediaWidth / 3,
-                                            height: double.infinity,
+                                          GestureDetector(
+                                            behavior: HitTestBehavior.opaque,
+                                            onTap: () => widget
+                                                .storyController.status
+                                                ?.add(PlaybackState.next),
+                                            child: SizedBox(
+                                              width: mediaWidth / 3,
+                                              height: double.infinity,
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Positioned(
-                                top: 20.0 + MediaQuery.of(context).padding.top,
-                                left: 10.0,
-                                right: 10.0,
-                                child: Column(
-                                  children: <Widget>[
-                                    Row(
-                                      children: widget.stories
-                                          .asMap()
-                                          .map((i, e) {
-                                            return MapEntry(
-                                              i,
-                                              AnimatedBar(
-                                                animController:
-                                                    _animationController,
-                                                position: i,
-                                                currentIndex: index,
-                                              ),
-                                            );
-                                          })
-                                          .values
-                                          .toList(),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              if (widget.exitButton)
                                 Positioned(
-                                  right: 5,
-                                  top: 50 + MediaQuery.of(context).padding.top,
-                                  child: InkWell(
-                                    onTap: () {
-                                      widget.scrollToItem!(widget.id);
-                                      widget.sizeModel!.dy = 0;
-                                      widget.sizeModel!.dx = 0;
-                                      widget.sizeModel!.isOpen = false;
-                                      widget.sizeModel!.heigth =
-                                          MediaQuery.of(context).size.height;
-                                      widget.sizeModel!.width =
-                                          MediaQuery.of(context).size.width;
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Container(
-                                      width: 50,
-                                      height: 50,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
+                                  top:
+                                      20.0 + MediaQuery.of(context).padding.top,
+                                  left: 10.0,
+                                  right: 10.0,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
+                                        children: widget.stories
+                                            .asMap()
+                                            .map((i, e) {
+                                              return MapEntry(
+                                                i,
+                                                AnimatedBar(
+                                                  animController:
+                                                      _animationController,
+                                                  position: i,
+                                                  currentIndex: index,
+                                                ),
+                                              );
+                                            })
+                                            .values
+                                            .toList(),
                                       ),
-                                      child: Center(
-                                        child: Container(
-                                          width: 32,
-                                          height: 32,
-                                          decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.white24),
-                                          child: const Material(
-                                            color: Colors.transparent,
-                                            child: Center(
-                                                child: Icon(Icons.close_rounded,
-                                                    color: Colors.white)),
+                                    ],
+                                  ),
+                                ),
+                                if (widget.exitButton)
+                                  Positioned(
+                                    right: 5,
+                                    top:
+                                        50 + MediaQuery.of(context).padding.top,
+                                    child: InkWell(
+                                      onTap: () {
+                                        widget.scrollToItem!(widget.id);
+                                        widget.sizeModel!.dy = 0;
+                                        widget.sizeModel!.dx = 0;
+                                        widget.sizeModel!.isOpen = false;
+                                        widget.sizeModel!.heigth =
+                                            MediaQuery.of(context).size.height;
+                                        widget.sizeModel!.width =
+                                            MediaQuery.of(context).size.width;
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Container(
+                                            width: 32,
+                                            height: 32,
+                                            decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.white24),
+                                            child: const Material(
+                                              color: Colors.transparent,
+                                              child: Center(
+                                                  child: Icon(
+                                                      Icons.close_rounded,
+                                                      color: Colors.white)),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              widget.stories[index].actionButton ??
-                                  const SizedBox(),
-                              widget.stories[index].child ?? const SizedBox(),
-                            ],
+                                widget.stories[index].actionButton ??
+                                    const SizedBox(),
+                                widget.stories[index].child ?? const SizedBox(),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
