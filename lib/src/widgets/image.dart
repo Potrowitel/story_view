@@ -10,13 +10,13 @@ class ImageWiget extends StatefulWidget {
   final Story story;
   final Widget? loadingWidget;
   final Widget? errorWidget;
-  final ValueChanged<StoryProcess> onProcess;
+  final ValueChanged<StoryProcess>? onProcess;
 
   const ImageWiget({
     Key? key,
     required this.id,
     required this.story,
-    required this.onProcess,
+    this.onProcess,
     this.loadingWidget,
     this.errorWidget,
   }) : super(key: key);
@@ -64,7 +64,7 @@ class _ImageWigetState extends State<ImageWiget> {
   void _onProcess(StoryStatus st, {dynamic error}) {
     if (st == StoryStatus.complete) {
       isComplete = true;
-      widget.onProcess.call(StoryProcess(
+      widget.onProcess?.call(StoryProcess(
         id: widget.id,
         error: error,
         duration: widget.story.duration,
@@ -72,7 +72,7 @@ class _ImageWigetState extends State<ImageWiget> {
       ));
     }
     if (!isComplete) {
-      widget.onProcess.call(StoryProcess(
+      widget.onProcess?.call(StoryProcess(
         id: widget.id,
         error: error,
         duration: widget.story.duration,

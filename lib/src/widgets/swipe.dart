@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/helper/behavior_helper.dart';
 import 'package:stories/src/models/story.dart';
-import 'package:stories/src/models/stoty_size.dart';
 import 'package:stories/src/story_screen.dart';
 import 'package:vector_math/vector_math.dart' as rad;
 
@@ -21,7 +20,7 @@ class StorySwipe extends StatefulWidget {
   final Function(int id, int storyId)? onWatched;
   final Function(int index) onPageComplete;
   final Color? statusBarColor;
-  final StorySizeModel sizeModel;
+  final StoryAnimationController storyAnimationController;
   final bool allowDragg;
 
   final Function(int index) scrollToItem;
@@ -40,7 +39,7 @@ class StorySwipe extends StatefulWidget {
     this.statusBarColor,
     this.onWatched,
     required this.scrollToItem,
-    required this.sizeModel,
+    required this.storyAnimationController,
     required this.allowDragg,
   }) : super(key: key);
 
@@ -72,16 +71,10 @@ class _StorySwipeState extends State<StorySwipe> {
         timeoutWidget: widget.timeoutWidget,
         exitButton: widget.exitButton,
         scrollToItem: widget.scrollToItem,
-        sizeModel: widget.sizeModel,
+        storyAnimationController: widget.storyAnimationController,
         allowDragg: widget.allowDragg,
       ),
     );
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarBrightness: Brightness.dark,
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarIconBrightness: Brightness.light,
-    ));
   }
 
   void listener() {
@@ -94,23 +87,12 @@ class _StorySwipeState extends State<StorySwipe> {
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: widget.statusBarColor,
-      statusBarBrightness: Brightness.light,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
     _pageController.removeListener(listener);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // var statusBarHeight = MediaQuery.of(context).padding.top;
-    // if (statusBarHeight <= 24) {
-    //   statusBarHeight = 0;
-    //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    // }
     return Material(
       color: Colors.transparent,
       child: ScrollConfiguration(

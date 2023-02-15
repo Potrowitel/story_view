@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:stories/src/models/stoty_size.dart';
+import 'package:flutter/services.dart';
+import 'package:stories/src/controller.dart';
+import 'package:stories/src/widgets/story_background.dart';
 
 import '../../stories.dart';
 
@@ -14,7 +18,7 @@ class StoryAnimation extends StatefulWidget {
   final double dx;
   final Animation<double> animation;
   final double statusBarHeigth;
-  final StorySizeModel sizeModel;
+  final StoryAnimationController storyAnimationController;
   final Duration duration;
   final Duration reverseDuration;
 
@@ -29,7 +33,7 @@ class StoryAnimation extends StatefulWidget {
     required this.dx,
     required this.animation,
     required this.statusBarHeigth,
-    required this.sizeModel,
+    required this.storyAnimationController,
     required this.duration,
     required this.reverseDuration,
   }) : super(key: key);
@@ -55,31 +59,31 @@ class _StoryAnimationState extends State<StoryAnimation>
 
   @override
   void initState() {
-    dyAnimation = widget.animation.drive(
-        Tween(begin: widget.dy + 5, end: widget.sizeModel.dy)
-            .chain(CurveTween(curve: Curves.easeInOut)));
+    dyAnimation = widget.animation.drive(Tween(
+            begin: widget.dy + 5,
+            end: widget.storyAnimationController.isOpen
+                ? widget.storyAnimationController.dy
+                : widget.storyAnimationController.dy + 25)
+        .chain(CurveTween(curve: Curves.easeInOut)));
     dxAnimation = widget.animation.drive(Tween(
             begin: widget.dx,
-            end: widget.sizeModel.isOpen
-                ? widget.sizeModel.dx
-                : widget.sizeModel.dx + 12)
-        .chain(CurveTween(curve: Curves.easeInOut)));
-    possitionAnimation = widget.animation.drive(Tween<double>(begin: 1, end: 0)
+            end: widget.storyAnimationController.isOpen
+                ? widget.storyAnimationController.dx
+                : widget.storyAnimationController.dx + 26)
         .chain(CurveTween(curve: Curves.easeInOut)));
 
-    backgroundOpacity = widget.animation.drive(
-        Tween<double>(begin: 0, end: widget.sizeModel.isOpen ? 1 : 0.6)
-            .chain(CurveTween(curve: Curves.easeInOut)));
+    backgroundOpacity = widget.animation.drive(Tween<double>(
+            begin: 0, end: widget.storyAnimationController.isOpen ? 1 : 0.6)
+        .chain(CurveTween(curve: Curves.easeInOut)));
 
     heigthAnim = widget.animation.drive(Tween(
-            begin: widget.cellHeight,
-            end: widget.storyCell.stories.first.meadiaType == MediaType.video
-                ? widget.sizeModel.heigth + widget.statusBarHeigth
-                : widget.sizeModel.heigth)
+            begin: widget.cellHeight! - 16,
+            end: widget.storyAnimationController.heigth)
         .chain(CurveTween(curve: Curves.easeInOut)));
-    widthAnim = widget.animation.drive(
-        Tween(begin: widget.cellWidht, end: widget.sizeModel.width)
-            .chain(CurveTween(curve: Curves.easeInOut)));
+    widthAnim = widget.animation.drive(Tween(
+            begin: widget.cellWidht! - 5,
+            end: widget.storyAnimationController.width)
+        .chain(CurveTween(curve: Curves.easeInOut)));
     animation = AnimationController(
       vsync: this,
       duration: widget.duration,
@@ -98,8 +102,71 @@ class _StoryAnimationState extends State<StoryAnimation>
     secondAnimationImage = animation.drive(Tween(begin: 1, end: 0));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       storyPreview = CachedNetworkImage(
-        imageUrl: widget.storyCell.stories[widget.sizeModel.id].url,
-        fit: BoxFit.contain,
+        imageUrl: widget.cells[widget.storyAnimationController.id]
+            .stories[widget.storyAnimationController.index].url,
+        errorWidget: (context, url, error) {
+          return const Center(
+            child: Text(
+              'Проверьте интернет соединение',
+              style: TextStyle(color: Colors.white),
+            ),
+          );
+        },
+        progressIndicatorBuilder: (context, url, progress) {
+          return Center(
+            child: SizedBox(
+              width: 60,
+              height: 60,
+              child: CircularProgressIndicator(
+                value: progress.progress,
+                color: Colors.blueGrey,
+                strokeWidth: 3.0,
+              ),
+            ),
+          );
+        },
+        imageBuilder: (context, imageProvider) {
+          if (widget.cells[widget.storyAnimationController.id]
+                  .stories[widget.storyAnimationController.index].backType !=
+              null) {
+            return Image(
+              alignment: Alignment.bottomCenter,
+              image: imageProvider,
+              fit: BoxFit.fitWidth,
+            );
+          }
+          return ClipRRect(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.3),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       );
     });
     super.initState();
@@ -114,102 +181,186 @@ class _StoryAnimationState extends State<StoryAnimation>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: widget.storyCell.stories.first.meadiaType ==
-                  MediaType.video ||
-              widget.storyCell.stories.first.backType == null
-          ? const Color(0xFF2E445B).withOpacity(backgroundOpacity.value)
-          : widget.sizeModel.isOpen
-              ? widget.storyCell.stories.first.gradientStart!
-                  .withOpacity(backgroundOpacity.value)
-              : const Color(0xFF2E445B).withOpacity(backgroundOpacity.value),
-      body: Stack(
-        children: [
-          AnimatedBuilder(
-              animation: widget.animation,
-              builder: (context, child) {
-                height = heigthAnim.value;
-                width = widthAnim.value;
-                return const SizedBox.shrink();
-              }),
-          Stack(
-            children: [
-              Positioned(
-                top: dyAnimation.value,
-                left: dxAnimation.value,
-                child: SizedBox(
-                  width: width,
-                  height: height,
-                  child: AnimatedBuilder(
-                      animation: animation,
-                      builder: (context, child) {
-                        return Stack(
-                          fit: StackFit.expand,
-                          alignment: Alignment.bottomCenter,
-                          children: [
-                            AnimatedOpacity(
-                              opacity: firstAnimationImage.value,
-                              duration: const Duration(),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                    32 * widget.animation.value),
-                                child: CachedNetworkImage(
-                                  height: height,
-                                  width: width,
-                                  imageUrl: widget.cells[widget.index].iconUrl,
-                                  fit: BoxFit.cover,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        backgroundColor:
+            const Color(0xFF2E445B).withOpacity(backgroundOpacity.value),
+        body: Stack(
+          children: [
+            AnimatedBuilder(
+                animation: widget.animation,
+                builder: (context, child) {
+                  height = heigthAnim.value;
+                  width = widthAnim.value;
+                  return const SizedBox.shrink();
+                }),
+            Stack(
+              children: [
+                Positioned(
+                  top: dyAnimation.value,
+                  left: dxAnimation.value,
+                  child: SizedBox(
+                    width: width,
+                    height: height,
+                    child: AnimatedBuilder(
+                        animation: animation,
+                        builder: (context, child) {
+                          // print('id ${widget.storyAnimationController.id}');
+                          // print(
+                          //     'index ${widget.storyAnimationController.index}');
+                          return Stack(
+                            fit: StackFit.expand,
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              AnimatedOpacity(
+                                opacity: firstAnimationImage.value,
+                                duration: const Duration(),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      32 * widget.animation.value),
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        widget.cells[widget.index].iconUrl,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                            AnimatedOpacity(
-                              duration: const Duration(),
-                              opacity: secondAnimationImage.value,
-                              child: Stack(
-                                children: [
-                                  if (widget
-                                              .storyCell
-                                              .stories[widget.sizeModel.id]
-                                              .meadiaType ==
-                                          MediaType.image ||
-                                      widget
-                                              .storyCell
-                                              .stories[widget.sizeModel.id]
+                              AnimatedOpacity(
+                                duration: const Duration(),
+                                opacity: secondAnimationImage.value,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      32 * widget.animation.value),
+                                  child: Stack(
+                                    children: [
+                                      if (widget
+                                              .cells[widget
+                                                  .storyAnimationController.id]
+                                              .stories[widget
+                                                  .storyAnimationController
+                                                  .index]
                                               .backType !=
                                           null)
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                          32 * widget.animation.value),
-                                      child: Container(
-                                        width: width,
-                                        height: height,
-                                        alignment: Alignment.bottomCenter,
-                                        child: storyPreview,
-                                      ),
-                                    ),
-                                  if (widget
-                                          .storyCell
-                                          .stories[widget.sizeModel.id]
-                                          .meadiaType ==
-                                      MediaType.video)
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black54,
-                                        borderRadius: BorderRadius.circular(
-                                          12 * (1 - widget.animation.value),
+                                        SizedBox(
+                                          height: double.infinity,
+                                          width: double.infinity,
+                                          child: StoryBackground(
+                                            type: widget
+                                                .cells[widget
+                                                    .storyAnimationController
+                                                    .id]
+                                                .stories[widget
+                                                    .storyAnimationController
+                                                    .index]
+                                                .backType,
+                                            url: widget
+                                                .cells[widget
+                                                    .storyAnimationController
+                                                    .id]
+                                                .stories[widget
+                                                    .storyAnimationController
+                                                    .index]
+                                                .backType,
+                                            gradientStart: widget
+                                                .cells[widget
+                                                    .storyAnimationController
+                                                    .id]
+                                                .stories[widget
+                                                    .storyAnimationController
+                                                    .index]
+                                                .gradientStart,
+                                            gradientEnd: widget
+                                                .cells[widget
+                                                    .storyAnimationController
+                                                    .id]
+                                                .stories[widget
+                                                    .storyAnimationController
+                                                    .index]
+                                                .gradientEnd,
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                ],
+                                      if (widget
+                                              .cells[widget
+                                                  .storyAnimationController.id]
+                                              .stories[widget
+                                                  .storyAnimationController
+                                                  .index]
+                                              .meadiaType ==
+                                          MediaType.image)
+                                        SizedBox(
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          child: storyPreview,
+                                        ),
+                                      if (widget
+                                              .cells[widget
+                                                  .storyAnimationController.id]
+                                              .stories[widget
+                                                  .storyAnimationController
+                                                  .index]
+                                              .meadiaType ==
+                                          MediaType.video)
+                                        Container(
+                                          width: width,
+                                          height: height,
+                                          decoration: widget
+                                                          .cells[widget
+                                                              .storyAnimationController
+                                                              .id]
+                                                          .stories[widget
+                                                              .storyAnimationController
+                                                              .index]
+                                                          .gradientStart ==
+                                                      null ||
+                                                  widget
+                                                          .cells[widget
+                                                              .storyAnimationController
+                                                              .id]
+                                                          .stories[widget
+                                                              .storyAnimationController
+                                                              .index]
+                                                          .gradientEnd ==
+                                                      null
+                                              ? null
+                                              : BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                    colors: [
+                                                      widget
+                                                          .cells[widget
+                                                              .storyAnimationController
+                                                              .id]
+                                                          .stories[widget
+                                                              .storyAnimationController
+                                                              .index]
+                                                          .gradientStart!,
+                                                      widget
+                                                          .cells[widget
+                                                              .storyAnimationController
+                                                              .id]
+                                                          .stories[widget
+                                                              .storyAnimationController
+                                                              .index]
+                                                          .gradientEnd!,
+                                                    ],
+                                                  ),
+                                                ),
+                                        )
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      }),
+                            ],
+                          );
+                        }),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -18,7 +16,8 @@ class VideoWidget extends StatefulWidget {
   final int? timeout;
   final Widget? loadingWidget;
   final ValueChanged<StoryProcess> onProcess;
-  final bool isDraggCancel;
+  final Color? gradientStart;
+  final Color? gradientEnd;
 
   const VideoWidget({
     required this.id,
@@ -30,7 +29,8 @@ class VideoWidget extends StatefulWidget {
     this.loadingWidget,
     Key? key,
     required this.globalId,
-    required this.isDraggCancel,
+    this.gradientStart,
+    this.gradientEnd,
   }) : super(key: key);
 
   @override
@@ -157,14 +157,26 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return ValueListenableBuilder<StoryStatus>(
         valueListenable: _widgetStatuses,
         builder: (context, value, child) {
           switch (value) {
             case StoryStatus.init:
-              return const SizedBox();
+              return Container(
+                decoration:
+                    widget.gradientStart == null && widget.gradientEnd == null
+                        ? null
+                        : BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                widget.gradientStart!,
+                                widget.gradientEnd!,
+                              ],
+                            ),
+                          ),
+              );
             case StoryStatus.loading:
               return const Center(
                 child: SizedBox(
@@ -200,37 +212,22 @@ class _VideoWidgetState extends State<VideoWidget> {
                 ),
               );
             case StoryStatus.complete:
-              double widthAspect =
-                  (_playerController!.value.size.width - width) / width;
-              double heightAspect =
-                  (_playerController!.value.size.height - height) / height;
-
               return Stack(alignment: Alignment.center, children: [
                 ClipRRect(
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        left: -widthAspect * width / 2,
-                        right: -widthAspect * width / 2,
-                        top: -heightAspect * height / 2,
-                        bottom: -heightAspect * height / 2,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          child: AspectRatio(
-                            aspectRatio: _playerController!.value.aspectRatio,
-                            child: VideoPlayer(_playerController!),
+                  child: Container(
+                    decoration: widget.gradientStart == null &&
+                            widget.gradientEnd == null
+                        ? const BoxDecoration(color: Color(0xFF2E445B))
+                        : BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                widget.gradientStart!,
+                                widget.gradientEnd!,
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                      BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                        child: Container(
-                          height: double.infinity,
-                          width: double.infinity,
-                          color: Colors.black.withOpacity(0.3),
-                        ),
-                      ),
-                    ],
                   ),
                 ),
                 Center(
@@ -266,13 +263,11 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   @override
   void dispose() {
-    // print(!widget.isDraggCancel);
-    if (!widget.isDraggCancel) {
-      _timeoutListen.removeListener(_timerListener);
-      _playerController?.removeListener(_videoListener);
-      _timeoutListen.cancel();
-      _playerController?.dispose();
-    }
+    _timeoutListen.removeListener(_timerListener);
+    _playerController?.removeListener(_videoListener);
+    _timeoutListen.cancel();
+    _playerController?.dispose();
+
     super.dispose();
   }
 }

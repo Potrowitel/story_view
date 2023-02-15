@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:stories/src/controller.dart';
-import 'package:stories/src/models/stoty_size.dart';
 import 'package:stories/src/story_screen.dart';
 import 'package:stories/src/widgets/multitouch.dart';
 import 'package:stories/src/widgets/story_animation.dart';
@@ -64,7 +63,7 @@ class _StoriesState extends State<Stories> {
   late double x;
   int currentItemIndex = 0;
   late double countItemOnScreen;
-  late StorySizeModel sizeModel;
+  late StoryAnimationController storyAnimationController;
 
   void onPageComplete(int index) {
     if (_pageController.page == widget.cells.length - 1) {
@@ -97,24 +96,24 @@ class _StoriesState extends State<Stories> {
           42 -
           _scrollController.offset -
           13 +
-          (_storiesController.id! - 1) * 75 * 0.9999);
+          (_storiesController.id! - 1) * (widget.cellWidht! + 10));
     } else if (_storiesController.id! >= widget.cells.length - 2) {
-      _scrollController.animateTo(offset - 2 * itemWidth,
+      double offset = (widget.cellWidht! + 10) * (_storiesController.id! - 4);
+      _scrollController.animateTo(offset,
           duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
-      x = (widget.cellWidht! +
-          42 -
-          (offset - 2 * itemWidth) -
-          13 +
-          (_storiesController.id! - 1) * 75 * 0.9999);
+      x = (widget.cellWidht! + 10.6) *
+              (_storiesController.id! == widget.cells.length - 1
+                  ? _storiesController.id!
+                  : _storiesController.id! - 1) -
+          offset;
     } else {
       _scrollController.animateTo(offset,
           duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
-
       x = (widget.cellWidht! +
           42 -
           offset -
           13 +
-          (_storiesController.id! - 1) * 75 * 0.9999);
+          (_storiesController.id! - 1) * 75);
     }
   }
 
@@ -184,9 +183,10 @@ class _StoriesState extends State<Stories> {
         42 -
         _scrollController.offset -
         13 +
-        (_storiesController.id! - 1) * 75 * 0.9999);
-    sizeModel = StorySizeModel(
-      id: 0,
+        (_storiesController.id! - 1) * 75);
+    storyAnimationController = StoryAnimationController(
+      id: initialPage,
+      index: 0,
       heigth: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       dy: widget.cells[initialPage].stories.first.meadiaType == MediaType.video
@@ -218,7 +218,7 @@ class _StoriesState extends State<Stories> {
                 storiesController: _storiesController,
                 timeoutWidget: widget.timeoutWidget ?? const SizedBox(),
                 scrollToItem: scrollToItem,
-                sizeModel: sizeModel,
+                storyAnimationController: storyAnimationController,
                 allowDragg: widget.allowDragg,
               ),
             );
@@ -239,7 +239,7 @@ class _StoriesState extends State<Stories> {
                     dx: x,
                     animation: animation,
                     statusBarHeigth: statusBarHeigth,
-                    sizeModel: sizeModel,
+                    storyAnimationController: storyAnimationController,
                     duration: widget.imageSwitchDuration,
                     reverseDuration: widget.reverseImageSwitchDuration,
                   )
@@ -292,9 +292,8 @@ class _StoriesState extends State<Stories> {
                               )
                         : null,
                     child: Container(
-                      width: widget.cellWidht != null ? widget.cellWidht! : 79,
-                      height:
-                          widget.cellHeight != null ? widget.cellHeight! : 79,
+                      width: widget.cellWidht ?? 79,
+                      height: widget.cellHeight ?? 79,
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         color: widget.underBorderColor,
@@ -304,6 +303,7 @@ class _StoriesState extends State<Stories> {
                         borderRadius: BorderRadius.circular(12),
                         child: CachedNetworkImage(
                           imageUrl: widget.cells[index].iconUrl,
+                          fit: BoxFit.cover,
                           errorWidget: (context, url, error) {
                             return Container(
                                 width: double.infinity,

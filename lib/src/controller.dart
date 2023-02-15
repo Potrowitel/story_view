@@ -46,3 +46,23 @@ class StoryController {
 
   void setStory(int value) => _id = value;
 }
+
+class StoryAnimationController {
+  int id;
+  int index;
+  double heigth;
+  double width;
+  double dy;
+  double dx;
+  bool isOpen;
+
+  StoryAnimationController({
+    required this.id,
+    required this.index,
+    required this.heigth,
+    required this.width,
+    required this.dy,
+    required this.dx,
+    required this.isOpen,
+  });
+}
