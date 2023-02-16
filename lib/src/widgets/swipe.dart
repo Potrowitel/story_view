@@ -93,31 +93,38 @@ class _StorySwipeState extends State<StorySwipe> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.black,
-      child: ScrollConfiguration(
-        behavior: MyBehavior(),
-        child: PageView.builder(
-          controller: _pageController,
-          itemCount: storyPages.length,
-          scrollDirection: Axis.horizontal,
-          pageSnapping: true,
-          allowImplicitScrolling: true,
-          itemBuilder: (context, index) {
-            double value;
-            widget.storyControllers[index].setStory(index);
-            if (_pageController.position.haveDimensions == false) {
-              value = index.toDouble();
-            } else {
-              value = _pageController.page!;
-            }
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: Material(
+        color: Colors.black,
+        child: ScrollConfiguration(
+          behavior: MyBehavior(),
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: storyPages.length,
+            scrollDirection: Axis.horizontal,
+            pageSnapping: true,
+            allowImplicitScrolling: true,
+            itemBuilder: (context, index) {
+              double value;
+              widget.storyControllers[index].setStory(index);
+              if (_pageController.position.haveDimensions == false) {
+                value = index.toDouble();
+              } else {
+                value = _pageController.page!;
+              }
 
-            return _SwipeWidget(
-              index: index,
-              pageNotifier: value,
-              child: storyPages[index],
-            );
-          },
+              return _SwipeWidget(
+                index: index,
+                pageNotifier: value,
+                child: storyPages[index],
+              );
+            },
+          ),
         ),
       ),
     );
