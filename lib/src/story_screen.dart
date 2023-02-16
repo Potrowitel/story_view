@@ -277,6 +277,8 @@ class _StoryScreenState extends State<StoryScreen>
                               _offset = details.globalPosition - _fingerOffset;
                               double heightPercent = mediaHeigth / 100;
                               double offsetPercent = _offset.dy / heightPercent;
+                              widget.storyController.status
+                                  ?.add(PlaybackState.pause);
                               if (offsetPercent < 0) {
                                 offsetPercent = 0;
                               }
@@ -295,7 +297,7 @@ class _StoryScreenState extends State<StoryScreen>
                           }
                         },
                         onDragStarted: () {
-                          radius = 32;
+                          radius = 40;
                         },
                         onDragEnd: (details) {
                           if (details.velocity.pixelsPerSecond.dy > 100 ||

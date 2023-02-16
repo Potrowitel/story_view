@@ -63,13 +63,25 @@ class _StoryAnimationState extends State<StoryAnimation>
             begin: widget.dy + 5,
             end: widget.storyAnimationController.isOpen
                 ? widget.storyAnimationController.dy
-                : widget.storyAnimationController.dy + 25)
+                : widget
+                            .cells[widget.storyAnimationController.id]
+                            .stories[widget.storyAnimationController.index]
+                            .meadiaType ==
+                        MediaType.video
+                    ? widget.storyAnimationController.dy
+                    : widget.storyAnimationController.dy + 25)
         .chain(CurveTween(curve: Curves.easeInOut)));
     dxAnimation = widget.animation.drive(Tween(
             begin: widget.dx,
             end: widget.storyAnimationController.isOpen
                 ? widget.storyAnimationController.dx
-                : widget.storyAnimationController.dx + 26)
+                : widget
+                            .cells[widget.storyAnimationController.id]
+                            .stories[widget.storyAnimationController.index]
+                            .meadiaType ==
+                        MediaType.video
+                    ? widget.storyAnimationController.dx
+                    : widget.storyAnimationController.dx + 26)
         .chain(CurveTween(curve: Curves.easeInOut)));
 
     backgroundOpacity = widget.animation.drive(Tween<double>(
@@ -218,7 +230,7 @@ class _StoryAnimationState extends State<StoryAnimation>
                                 duration: const Duration(),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      32 * widget.animation.value),
+                                      40 * widget.animation.value),
                                   child: CachedNetworkImage(
                                     imageUrl:
                                         widget.cells[widget.index].iconUrl,
@@ -231,7 +243,7 @@ class _StoryAnimationState extends State<StoryAnimation>
                                 opacity: secondAnimationImage.value,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      32 * widget.animation.value),
+                                      40 * widget.animation.value),
                                   child: Stack(
                                     children: [
                                       if (widget
