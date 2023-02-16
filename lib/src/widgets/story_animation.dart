@@ -196,8 +196,6 @@ class _StoryAnimationState extends State<StoryAnimation>
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.light,
         statusBarIconBrightness: Brightness.light,
       ),
