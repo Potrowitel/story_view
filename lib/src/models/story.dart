@@ -15,6 +15,14 @@ class StoryCell {
     required this.stories,
     required this.watched,
   });
+
+  // StoryCell copyWith({String? iconUrl, List<Story>? stories, bool? watched}) {
+  //   return StoryCell(
+  //     iconUrl: iconUrl ?? this.iconUrl,
+  //     stories: stories ?? this.stories,
+  //     watched: watched ?? this.watched,
+  //   );
+  // }
 }
 
 class Story {
