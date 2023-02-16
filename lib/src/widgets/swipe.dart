@@ -50,13 +50,13 @@ class StorySwipe extends StatefulWidget {
 class _StorySwipeState extends State<StorySwipe> {
   late PageController _pageController;
   List<StoryScreen> storyPages = [];
+  bool _isDragg = false;
 
   @override
   void initState() {
     super.initState();
     _pageController = widget.pageController;
     _pageController.addListener(listener);
-
     storyPages = List.generate(
       widget.cells.length,
       (i) => StoryScreen(
@@ -73,6 +73,12 @@ class _StorySwipeState extends State<StorySwipe> {
         scrollToItem: widget.scrollToItem,
         storyAnimationController: widget.storyAnimationController,
         allowDragg: widget.allowDragg,
+        onDragg: (isDragg) {
+          print(isDragg);
+          setState(() {
+            _isDragg = isDragg;
+          });
+        },
       ),
     );
   }
@@ -100,7 +106,7 @@ class _StorySwipeState extends State<StorySwipe> {
         statusBarIconBrightness: Brightness.light,
       ),
       child: Material(
-        color: Colors.black,
+        color: _isDragg ? Colors.transparent : Colors.black,
         child: ScrollConfiguration(
           behavior: MyBehavior(),
           child: PageView.builder(

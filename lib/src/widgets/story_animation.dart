@@ -200,8 +200,11 @@ class _StoryAnimationState extends State<StoryAnimation>
         statusBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor:
-            const Color(0xFF2E445B).withOpacity(backgroundOpacity.value),
+        backgroundColor: const Color(0xFF2E445B).withOpacity(
+            widget.storyAnimationController.opacity != null
+                ? widget.storyAnimationController.opacity! *
+                    backgroundOpacity.value
+                : backgroundOpacity.value),
         body: Stack(
           children: [
             AnimatedBuilder(

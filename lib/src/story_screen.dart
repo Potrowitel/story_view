@@ -27,6 +27,7 @@ class StoryScreen extends StatefulWidget {
   final Function(int index)? scrollToItem;
   final StoryAnimationController? storyAnimationController;
   bool? allowDragg;
+  final Function(bool isDragg)? onDragg;
 
   StoryScreen({
     Key? key,
@@ -46,6 +47,7 @@ class StoryScreen extends StatefulWidget {
     this.scrollToItem,
     this.storyAnimationController,
     this.allowDragg,
+    this.onDragg,
   }) : super(key: key);
 
   @override
@@ -302,6 +304,7 @@ class _StoryScreenState extends State<StoryScreen>
                         },
                         onDragStarted: () {
                           radius = 40;
+                          widget.onDragg?.call(true);
                         },
                         onDragEnd: (details) {
                           if (details.velocity.pixelsPerSecond.dy > 100 ||
@@ -312,6 +315,7 @@ class _StoryScreenState extends State<StoryScreen>
                               widget.storyAnimationController!.dy = _offset.dy +
                                   MediaQuery.of(context).viewPadding.top;
                             }
+                            widget.storyAnimationController?.opacity = _opacity;
                             widget.storyAnimationController!.index =
                                 _storyListen.currentStory;
                             widget.storyAnimationController!.id = widget.id;
@@ -325,6 +329,7 @@ class _StoryScreenState extends State<StoryScreen>
                           }
                           if (_offset.dy < mediaHeigth / 8 &&
                               widget.allowDragg!) {
+                            widget.onDragg?.call(false);
                             _offset = Offset.zero;
                             scale = 1;
                             radius = 0;

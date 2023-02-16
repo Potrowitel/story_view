@@ -55,6 +55,7 @@ class StoryAnimationController {
   double dy;
   double dx;
   bool isOpen;
+  double? opacity;
 
   StoryAnimationController({
     required this.id,
@@ -64,5 +65,6 @@ class StoryAnimationController {
     required this.dy,
     required this.dx,
     required this.isOpen,
+    this.opacity,
   });
 }
