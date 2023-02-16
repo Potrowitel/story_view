@@ -94,7 +94,7 @@ class _StorySwipeState extends State<StorySwipe> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: Colors.black,
       child: ScrollConfiguration(
         behavior: MyBehavior(),
         child: PageView.builder(

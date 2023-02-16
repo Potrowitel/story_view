@@ -231,8 +231,8 @@ class _StoryScreenState extends State<StoryScreen>
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
