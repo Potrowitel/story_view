@@ -13,7 +13,7 @@ class StoryAnimation extends StatefulWidget {
   final List<StoryCell> cells;
   final int index;
   final double? cellHeight;
-  final double? cellWidht;
+  final double? cellWidth;
   final double dy;
   final double dx;
   final Animation<double> animation;
@@ -28,7 +28,7 @@ class StoryAnimation extends StatefulWidget {
     required this.index,
     required this.cells,
     this.cellHeight,
-    this.cellWidht,
+    this.cellWidth,
     required this.dy,
     required this.dx,
     required this.animation,
@@ -46,7 +46,7 @@ class _StoryAnimationState extends State<StoryAnimation>
     with TickerProviderStateMixin {
   late Animation<double> dyAnimation;
   late Animation<double> dxAnimation;
-  late Animation<double> possitionAnimation;
+  late Animation<double> borderAnimation;
   late Animation<double> backgroundOpacity;
   late Animation<double> firstAnimationImage;
   late Animation<double> secondAnimationImage;
@@ -54,48 +54,33 @@ class _StoryAnimationState extends State<StoryAnimation>
   late Animation<double> widthAnim;
   late AnimationController animation;
   late double height = widget.cellHeight!;
-  late double width = widget.cellWidht!;
+  late double width = widget.cellWidth!;
   Widget? storyPreview;
+  Widget? storiesPreview;
+  Widget? storyBackground;
 
   @override
   void initState() {
-    dyAnimation = widget.animation.drive(Tween(
-            begin: widget.dy + 5,
-            end: widget.storyAnimationController.isOpen
-                ? widget.storyAnimationController.dy
-                : widget
-                            .cells[widget.storyAnimationController.id]
-                            .stories[widget.storyAnimationController.index]
-                            .meadiaType ==
-                        MediaType.video
-                    ? widget.storyAnimationController.dy
-                    : widget.storyAnimationController.dy + 25)
-        .chain(CurveTween(curve: Curves.easeInOut)));
-    dxAnimation = widget.animation.drive(Tween(
-            begin: widget.dx,
-            end: widget.storyAnimationController.isOpen
-                ? widget.storyAnimationController.dx
-                : widget
-                            .cells[widget.storyAnimationController.id]
-                            .stories[widget.storyAnimationController.index]
-                            .meadiaType ==
-                        MediaType.video
-                    ? widget.storyAnimationController.dx
-                    : widget.storyAnimationController.dx + 26)
-        .chain(CurveTween(curve: Curves.easeInOut)));
+    dyAnimation = widget.animation.drive(
+        Tween(begin: widget.dy + 9, end: widget.storyAnimationController.dy)
+            .chain(CurveTween(curve: Curves.easeInOut)));
+    dxAnimation = widget.animation.drive(
+        Tween(begin: widget.dx + 1, end: widget.storyAnimationController.dx)
+            .chain(CurveTween(curve: Curves.easeInOut)));
 
     backgroundOpacity = widget.animation.drive(Tween<double>(
             begin: 0, end: widget.storyAnimationController.isOpen ? 1 : 0.6)
         .chain(CurveTween(curve: Curves.easeInOut)));
 
     heigthAnim = widget.animation.drive(Tween(
-            begin: widget.cellHeight! - 16,
+            begin: widget.cellHeight! - 18,
             end: widget.storyAnimationController.heigth)
         .chain(CurveTween(curve: Curves.easeInOut)));
     widthAnim = widget.animation.drive(Tween(
-            begin: widget.cellWidht! - 5,
+            begin: widget.cellWidth! - 8,
             end: widget.storyAnimationController.width)
         .chain(CurveTween(curve: Curves.easeInOut)));
+    borderAnimation = widget.animation.drive(Tween(begin: 1, end: 0));
     animation = AnimationController(
       vsync: this,
       duration: widget.duration,
@@ -180,6 +165,20 @@ class _StoryAnimationState extends State<StoryAnimation>
           );
         },
       );
+      storiesPreview = CachedNetworkImage(
+        imageUrl: widget.cells[widget.index].iconUrl,
+        fit: BoxFit.cover,
+      );
+      storyBackground = StoryBackground(
+        type: widget.cells[widget.storyAnimationController.id]
+            .stories[widget.storyAnimationController.index].backType,
+        url: widget.cells[widget.storyAnimationController.id]
+            .stories[widget.storyAnimationController.index].backType,
+        gradientStart: widget.cells[widget.storyAnimationController.id]
+            .stories[widget.storyAnimationController.index].gradientStart,
+        gradientEnd: widget.cells[widget.storyAnimationController.id]
+            .stories[widget.storyAnimationController.index].gradientEnd,
+      );
     });
     super.initState();
   }
@@ -188,6 +187,7 @@ class _StoryAnimationState extends State<StoryAnimation>
   void dispose() {
     animation.dispose();
     storyPreview = null;
+    storiesPreview = null;
     super.dispose();
   }
 
@@ -225,9 +225,6 @@ class _StoryAnimationState extends State<StoryAnimation>
                     child: AnimatedBuilder(
                         animation: animation,
                         builder: (context, child) {
-                          // print('id ${widget.storyAnimationController.id}');
-                          // print(
-                          //     'index ${widget.storyAnimationController.index}');
                           return Stack(
                             fit: StackFit.expand,
                             alignment: Alignment.bottomCenter,
@@ -237,12 +234,8 @@ class _StoryAnimationState extends State<StoryAnimation>
                                 duration: const Duration(),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      40 * widget.animation.value),
-                                  child: CachedNetworkImage(
-                                    imageUrl:
-                                        widget.cells[widget.index].iconUrl,
-                                    fit: BoxFit.cover,
-                                  ),
+                                      16 * borderAnimation.value),
+                                  child: storiesPreview,
                                 ),
                               ),
                               AnimatedOpacity(
@@ -266,43 +259,9 @@ class _StoryAnimationState extends State<StoryAnimation>
                                               .backType !=
                                           null)
                                         SizedBox(
-                                          height: double.infinity,
-                                          width: double.infinity,
-                                          child: StoryBackground(
-                                            type: widget
-                                                .cells[widget
-                                                    .storyAnimationController
-                                                    .id]
-                                                .stories[widget
-                                                    .storyAnimationController
-                                                    .index]
-                                                .backType,
-                                            url: widget
-                                                .cells[widget
-                                                    .storyAnimationController
-                                                    .id]
-                                                .stories[widget
-                                                    .storyAnimationController
-                                                    .index]
-                                                .backType,
-                                            gradientStart: widget
-                                                .cells[widget
-                                                    .storyAnimationController
-                                                    .id]
-                                                .stories[widget
-                                                    .storyAnimationController
-                                                    .index]
-                                                .gradientStart,
-                                            gradientEnd: widget
-                                                .cells[widget
-                                                    .storyAnimationController
-                                                    .id]
-                                                .stories[widget
-                                                    .storyAnimationController
-                                                    .index]
-                                                .gradientEnd,
-                                          ),
-                                        ),
+                                            height: double.infinity,
+                                            width: double.infinity,
+                                            child: storyBackground),
                                       if (widget
                                               .cells[widget
                                                   .storyAnimationController.id]

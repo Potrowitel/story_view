@@ -14,7 +14,7 @@ class Stories extends StatefulWidget {
   final int timeout;
   final Widget? timeoutWidget;
   final double? cellHeight;
-  final double? cellWidht;
+  final double? cellWidth;
   final bool exitButton;
   final Color? statusBarColor;
   final bool allowBorder;
@@ -33,7 +33,7 @@ class Stories extends StatefulWidget {
     this.timeout = 20,
     this.timeoutWidget,
     this.cellHeight,
-    this.cellWidht,
+    this.cellWidth,
     this.statusBarColor,
     this.onWatched,
     this.exitButton = true,
@@ -85,23 +85,23 @@ class _StoriesState extends State<Stories> {
 
   void scrollToItem(int index) {
     double itemWidth =
-        (MediaQuery.of(context).size.width - widget.cellWidht! + 7) * 0.00001 +
-            widget.cellWidht! -
+        (MediaQuery.of(context).size.width - widget.cellWidth! + 7) * 0.00001 +
+            widget.cellWidth! -
             6;
     countItemOnScreen = MediaQuery.of(context).size.width / (itemWidth + 10);
     double offset = (itemWidth + 10) * _storiesController.id!;
     if (currentItemIndex <= _storiesController.id! &&
         _storiesController.id! < countItemOnScreen + currentItemIndex) {
-      x = (widget.cellWidht! +
+      x = (widget.cellWidth! +
           42 -
           _scrollController.offset -
           13 +
-          (_storiesController.id! - 1) * (widget.cellWidht! + 10));
+          (_storiesController.id! - 1) * (widget.cellWidth! + 10));
     } else if (_storiesController.id! >= widget.cells.length - 2) {
-      double offset = (widget.cellWidht! + 10) * (_storiesController.id! - 4);
+      double offset = (widget.cellWidth! + 10) * (_storiesController.id! - 4);
       _scrollController.animateTo(offset,
           duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
-      x = (widget.cellWidht! + 10.6) *
+      x = (widget.cellWidth! + 10.6) *
               (_storiesController.id! == widget.cells.length - 1
                   ? _storiesController.id!
                   : _storiesController.id! - 1) -
@@ -109,7 +109,7 @@ class _StoriesState extends State<Stories> {
     } else {
       _scrollController.animateTo(offset,
           duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
-      x = (widget.cellWidht! +
+      x = (widget.cellWidth! +
           42 -
           offset -
           13 +
@@ -179,11 +179,11 @@ class _StoriesState extends State<Stories> {
 
     var position = box.localToGlobal(Offset.zero);
     var y = position.dy;
-    x = (widget.cellWidht! +
+    x = (widget.cellWidth! +
         42 -
         _scrollController.offset -
         13 +
-        (_storiesController.id! - 1) * 75);
+        (_storiesController.id! - 1) * (widget.cellWidth! + 10));
     storyAnimationController = StoryAnimationController(
       id: initialPage,
       index: 0,
@@ -223,7 +223,9 @@ class _StoriesState extends State<Stories> {
               ),
             );
           },
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          transitionsBuilder: (context, animation1, secondaryAnimation, child) {
+            Animation<double> animation =
+                animation1.drive(Tween(begin: 0.99999, end: 1));
             if (animation.isCompleted) {
               return child;
             }
@@ -234,7 +236,7 @@ class _StoriesState extends State<Stories> {
                     cells: widget.cells,
                     index: _storiesController.id!,
                     cellHeight: widget.cellHeight,
-                    cellWidht: widget.cellWidht,
+                    cellWidth: widget.cellWidth,
                     dy: y,
                     dx: x,
                     animation: animation,
@@ -270,8 +272,8 @@ class _StoriesState extends State<Stories> {
                       left: index == 0 ? 16 : 5,
                       right: index == widget.cells.length - 1 ? 16 : 5),
                   child: Container(
-                    width: widget.cellWidht != null ? widget.cellWidht! : 80,
-                    height: widget.cellHeight != null ? widget.cellHeight! : 80,
+                    width: widget.cellWidth ?? 80,
+                    height: widget.cellHeight ?? 80,
                     padding: const EdgeInsets.all(2),
                     decoration: widget.allowBorder
                         ? widget.cells[index].watched
@@ -280,7 +282,7 @@ class _StoriesState extends State<Stories> {
                                 color: const Color(0xFFB6BCC3).withOpacity(0.5),
                               )
                             : BoxDecoration(
-                                borderRadius: BorderRadius.circular(13),
+                                borderRadius: BorderRadius.circular(14),
                                 gradient: const LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -292,18 +294,18 @@ class _StoriesState extends State<Stories> {
                               )
                         : null,
                     child: Container(
-                      width: widget.cellWidht ?? 79,
+                      width: widget.cellWidth ?? 79,
                       height: widget.cellHeight ?? 79,
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         color: widget.underBorderColor,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(13),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(0),
                         child: CachedNetworkImage(
                           imageUrl: widget.cells[index].iconUrl,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           errorWidget: (context, url, error) {
                             return Container(
                                 width: double.infinity,
@@ -312,7 +314,7 @@ class _StoriesState extends State<Stories> {
                           },
                           imageBuilder: (context, imageProvider) {
                             return Container(
-                              width: widget.cellWidht ?? 70,
+                              width: widget.cellWidth ?? 70,
                               height: widget.cellHeight ?? 70,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),

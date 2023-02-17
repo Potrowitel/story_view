@@ -281,6 +281,7 @@ class _StoryScreenState extends State<StoryScreen>
                           if (widget.allowDragg!) {
                             setState(() {
                               _offset = details.globalPosition - _fingerOffset;
+
                               double heightPercent = mediaHeigth / 100;
                               double offsetPercent = _offset.dy / heightPercent;
                               widget.storyController.status
@@ -311,9 +312,14 @@ class _StoryScreenState extends State<StoryScreen>
                               _offset.dy > mediaHeigth / 8) {
                             widget.scrollToItem!(_storyListen.currentStory);
                             if (widget.allowDragg!) {
-                              widget.storyAnimationController!.dx = _offset.dx;
-                              widget.storyAnimationController!.dy = _offset.dy +
-                                  MediaQuery.of(context).viewPadding.top;
+                              widget.storyAnimationController?.dx = _offset.dx +
+                                  (MediaQuery.of(context).size.width *
+                                      (1 - scale) /
+                                      2);
+                              widget.storyAnimationController?.dy = _offset.dy +
+                                  (MediaQuery.of(context).size.height *
+                                      (1 - scale) /
+                                      2);
                             }
                             widget.storyAnimationController?.opacity = _opacity;
                             widget.storyAnimationController!.index =

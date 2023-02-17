@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.only(top: 60),
             child: Stories(
               cellHeight: 105,
-              cellWidht: 65,
+              cellWidth: 65,
               // underBorderColor: Colors.amber,
               // allowBorder: false,
               // allowAnimation: false,
