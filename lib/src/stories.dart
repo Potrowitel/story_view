@@ -223,9 +223,7 @@ class _StoriesState extends State<Stories> {
               ),
             );
           },
-          transitionsBuilder: (context, animation1, secondaryAnimation, child) {
-            Animation<double> animation =
-                animation1.drive(Tween(begin: 0.99999, end: 1));
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
             if (animation.isCompleted) {
               return child;
             }
