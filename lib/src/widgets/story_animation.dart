@@ -110,7 +110,7 @@ class _StoryAnimationState extends State<StoryAnimation>
       animation.reverse(from: 1);
     }
 
-    firstAnimationImage = animation.drive(Tween(begin: 0, end: 1));
+    firstAnimationImage = widget.animation.drive(Tween(begin: 1, end: 0));
     secondAnimationImage = animation.drive(Tween(begin: 1, end: 0));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       storyPreview = CachedNetworkImage(
@@ -247,7 +247,11 @@ class _StoryAnimationState extends State<StoryAnimation>
                               ),
                               AnimatedOpacity(
                                 duration: const Duration(),
-                                opacity: secondAnimationImage.value,
+                                opacity: secondAnimationImage.value * 3 > 1
+                                    ? 1
+                                    : secondAnimationImage.value * 3 < 0
+                                        ? 0
+                                        : secondAnimationImage.value * 3,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
                                       40 * widget.animation.value),

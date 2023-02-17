@@ -74,7 +74,6 @@ class _StorySwipeState extends State<StorySwipe> {
         storyAnimationController: widget.storyAnimationController,
         allowDragg: widget.allowDragg,
         onDragg: (isDragg) {
-          print(isDragg);
           setState(() {
             _isDragg = isDragg;
           });
