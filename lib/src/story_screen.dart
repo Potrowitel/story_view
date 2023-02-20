@@ -124,7 +124,8 @@ class _StoryScreenState extends State<StoryScreen>
         AnimationController(vsync: this, duration: const Duration(seconds: 5));
 
     _animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
+      if (status == AnimationStatus.completed &&
+          _storyListen.currentStory != widget.stories.length - 1) {
         widget.storyController.status?.add(PlaybackState.next);
       }
     });
