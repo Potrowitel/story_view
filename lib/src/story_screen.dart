@@ -189,6 +189,8 @@ class _StoryScreenState extends State<StoryScreen>
         _pageController.jumpToPage(0);
       } else {
         if (isDraging) return;
+        widget.watchedController?.setWatched(true, widget.id);
+        print(widget.id);
         widget.onComplete!(widget.id);
       }
     } else {
