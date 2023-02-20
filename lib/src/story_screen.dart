@@ -67,7 +67,7 @@ class _StoryScreenState extends State<StoryScreen>
   double radius = 0;
   late final double mediaWidth;
   late final double mediaHeigth;
-
+  bool isDraging = false;
   late double scale;
 
   @override
@@ -126,8 +126,7 @@ class _StoryScreenState extends State<StoryScreen>
         AnimationController(vsync: this, duration: const Duration(seconds: 5));
 
     _animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed &&
-          _storyListen.currentStory != widget.stories.length - 1) {
+      if (status == AnimationStatus.completed) {
         widget.storyController.status?.add(PlaybackState.next);
       }
     });
@@ -189,6 +188,7 @@ class _StoryScreenState extends State<StoryScreen>
         _storyListen.changePage(id: 0);
         _pageController.jumpToPage(0);
       } else {
+        if (isDraging) return;
         widget.onComplete!(widget.id);
       }
     } else {
@@ -284,7 +284,6 @@ class _StoryScreenState extends State<StoryScreen>
                           if (widget.allowDragg!) {
                             setState(() {
                               _offset = details.globalPosition - _fingerOffset;
-
                               double heightPercent = mediaHeigth / 100;
                               double offsetPercent = _offset.dy / heightPercent;
                               widget.storyController.status
@@ -303,6 +302,7 @@ class _StoryScreenState extends State<StoryScreen>
                               if (!widget.allowDragg!) {
                                 scale = 1;
                               }
+                              isDraging = true;
                             });
                           }
                         },
@@ -348,6 +348,7 @@ class _StoryScreenState extends State<StoryScreen>
                               widget.storyController.status
                                   ?.add(PlaybackState.play);
                             }
+                            isDraging = false;
                             setState(() {});
                           }
                         },
