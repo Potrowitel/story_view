@@ -28,6 +28,7 @@ class StoryScreen extends StatefulWidget {
   final StoryAnimationController? storyAnimationController;
   bool? allowDragg;
   final Function(bool isDragg)? onDragg;
+  final StoriesWatchedController? watchedController;
 
   StoryScreen({
     Key? key,
@@ -48,6 +49,7 @@ class StoryScreen extends StatefulWidget {
     this.storyAnimationController,
     this.allowDragg,
     this.onDragg,
+    this.watchedController,
   }) : super(key: key);
 
   @override
@@ -331,6 +333,8 @@ class _StoryScreenState extends State<StoryScreen>
                                 MediaQuery.of(context).size.height * scale;
                             widget.storyAnimationController!.width =
                                 MediaQuery.of(context).size.width * scale;
+                            widget.watchedController
+                                ?.setWatched(true, widget.id - 1);
                             Navigator.of(context).pop();
                             return;
                           }
@@ -487,6 +491,8 @@ class _StoryScreenState extends State<StoryScreen>
                                             MediaQuery.of(context).size.height;
                                         widget.storyAnimationController!.width =
                                             MediaQuery.of(context).size.width;
+                                        widget.watchedController
+                                            ?.setWatched(true, widget.id - 1);
                                         Navigator.of(context).pop();
                                       },
                                       child: Container(

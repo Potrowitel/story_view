@@ -68,3 +68,17 @@ class StoryAnimationController {
     this.opacity,
   });
 }
+
+class StoriesWatchedController extends ChangeNotifier {
+  List<bool> _isWatched;
+  StoriesWatchedController(this._isWatched);
+  bool watched(int id) {
+    return _isWatched[id];
+  }
+
+  bool setWatched(bool val, int id) {
+    _isWatched[id] = val;
+    notifyListeners();
+    return _isWatched[id];
+  }
+}

@@ -228,6 +228,21 @@ final cell16 = StoryCell(
         meadiaType: MediaType.video,
       ),
     ]);
+final imageCell = StoryCell(
+    iconUrl:
+        'http://services.myhalyk.kg/images/stories/dce23ea9-f32b-41a0-b694-c00ce6560187.png',
+    watched: false,
+    stories: [
+      Story(
+        url:
+            'http://services.myhalyk.kg/images/stories/b9c7e09c-e1bd-438b-8452-5616ab8b2888.png',
+        actionButton: StoryActionButton(onTap: () => print('Test')),
+        duration: const Duration(milliseconds: 6005),
+        gradientStart: const Color(0xFF3660D2),
+        gradientEnd: const Color(0xff008ac1),
+        backType: 'GRADIENT',
+      ),
+    ]);
 // final cell17 = StoryCell(
 //     watched: false,
 //     iconUrl:

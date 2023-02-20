@@ -64,7 +64,7 @@ class _StoriesState extends State<Stories> {
   int currentItemIndex = 0;
   late double countItemOnScreen;
   late StoryAnimationController storyAnimationController;
-
+  late StoriesWatchedController watchedController;
   void onPageComplete(int index) {
     if (_pageController.page == widget.cells.length - 1) {
       if (!mounted) return;
@@ -113,7 +113,7 @@ class _StoriesState extends State<Stories> {
           42 -
           offset -
           13 +
-          (_storiesController.id! - 1) * 75);
+          (_storiesController.id! - 1) * (widget.cellWidth! + 10));
     }
   }
 
@@ -125,10 +125,17 @@ class _StoriesState extends State<Stories> {
     _scrollController.addListener(() {
       offsetListener();
     });
+    watchedController = StoriesWatchedController(List.generate(
+        widget.cells.length, (index) => widget.cells[index].watched));
+    watchedController.addListener(
+      () {
+        if (!mounted) return;
+        setState(() {});
+      },
+    );
 
     _storyControllers =
         List.generate(widget.cells.length, (index) => StoryController(index));
-
     _pageController = PageController();
   }
 
@@ -142,7 +149,8 @@ class _StoriesState extends State<Stories> {
   }
 
   void offsetListener() {
-    currentItemIndex = ((_scrollController.offset + 10) / 75).floor();
+    currentItemIndex =
+        ((_scrollController.offset + 10) / (widget.cellWidth! + 10)).floor();
   }
 
   void pageListener() {
@@ -220,6 +228,7 @@ class _StoriesState extends State<Stories> {
                 scrollToItem: scrollToItem,
                 storyAnimationController: storyAnimationController,
                 allowDragg: widget.allowDragg,
+                watchedController: watchedController,
               ),
             );
           },
@@ -274,7 +283,7 @@ class _StoriesState extends State<Stories> {
                     height: widget.cellHeight ?? 80,
                     padding: const EdgeInsets.all(2),
                     decoration: widget.allowBorder
-                        ? widget.cells[index].watched
+                        ? watchedController.watched(index)
                             ? BoxDecoration(
                                 borderRadius: BorderRadius.circular(14),
                                 color: const Color(0xFFB6BCC3).withOpacity(0.5),

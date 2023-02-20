@@ -22,6 +22,7 @@ class StorySwipe extends StatefulWidget {
   final Color? statusBarColor;
   final StoryAnimationController storyAnimationController;
   final bool allowDragg;
+  final StoriesWatchedController? watchedController;
 
   final Function(int index) scrollToItem;
 
@@ -41,6 +42,7 @@ class StorySwipe extends StatefulWidget {
     required this.scrollToItem,
     required this.storyAnimationController,
     required this.allowDragg,
+    this.watchedController,
   }) : super(key: key);
 
   @override
@@ -51,7 +53,7 @@ class _StorySwipeState extends State<StorySwipe> {
   late PageController _pageController;
   List<StoryScreen> storyPages = [];
   bool _isDragg = false;
-
+  int? saved;
   @override
   void initState() {
     super.initState();
@@ -63,7 +65,14 @@ class _StorySwipeState extends State<StorySwipe> {
         id: i,
         storyController: widget.storyControllers[i],
         storiesController: widget.storiesController,
-        onWatched: (storyId) => widget.onWatched?.call(i, storyId),
+        watchedController: widget.watchedController,
+        onWatched: (storyId) {
+          if (saved != i && saved != null) {
+            widget.watchedController?.setWatched(true, i - 1);
+          }
+          saved = i;
+          widget.onWatched?.call(i, storyId);
+        },
         stories: widget.cells[i].stories,
         onComplete: widget.onPageComplete,
         initialPage: widget.initialPage,
