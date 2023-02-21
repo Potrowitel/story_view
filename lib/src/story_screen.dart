@@ -190,7 +190,6 @@ class _StoryScreenState extends State<StoryScreen>
       } else {
         if (isDraging) return;
         widget.watchedController?.setWatched(true, widget.id);
-        print(widget.id);
         widget.onComplete!(widget.id);
       }
     } else {
@@ -335,8 +334,10 @@ class _StoryScreenState extends State<StoryScreen>
                                 MediaQuery.of(context).size.height * scale;
                             widget.storyAnimationController!.width =
                                 MediaQuery.of(context).size.width * scale;
-                            widget.watchedController
-                                ?.setWatched(true, widget.id - 1);
+                            if (widget.id > 0) {
+                              widget.watchedController
+                                  ?.setWatched(true, widget.id - 1);
+                            }
                             Navigator.of(context).pop();
                             return;
                           }
@@ -494,8 +495,10 @@ class _StoryScreenState extends State<StoryScreen>
                                             MediaQuery.of(context).size.height;
                                         widget.storyAnimationController!.width =
                                             MediaQuery.of(context).size.width;
-                                        widget.watchedController
-                                            ?.setWatched(true, widget.id - 1);
+                                        if (widget.id > 0) {
+                                          widget.watchedController
+                                              ?.setWatched(true, widget.id - 1);
+                                        }
                                         Navigator.of(context).pop();
                                       },
                                       child: Container(
