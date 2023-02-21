@@ -328,10 +328,11 @@ class _StoryScreenState extends State<StoryScreen>
                         onDragEnd: (details) {
                           if (details.velocity.pixelsPerSecond.dy > 100 ||
                               _offset.dy > mediaHeigth / 8) {
-                            if (widget.allowDragg) {
+                            if (widget.isPopped) {
                               widget.scrollToItem
                                   ?.call(_storyListen.currentStory);
-
+                            }
+                            if (widget.allowDragg) {
                               widget.storyAnimationController?.dx = _offset.dx +
                                   (MediaQuery.of(context).size.width *
                                       (1 - scale) /
@@ -497,7 +498,7 @@ class _StoryScreenState extends State<StoryScreen>
                                         50 + MediaQuery.of(context).padding.top,
                                     child: InkWell(
                                       onTap: () {
-                                        if (widget.allowDragg) {
+                                        if (widget.isPopped) {
                                           widget.scrollToItem?.call(widget.id);
                                         }
                                         widget.storyAnimationController?.id =
