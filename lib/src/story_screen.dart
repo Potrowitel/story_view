@@ -99,6 +99,9 @@ class _StoryScreenState extends State<StoryScreen>
           _pause();
           break;
         case PlaybackState.next:
+          if (_storyListen.currentStatus == StoryStatus.complete) {
+            _pause();
+          }
           _nextPage();
           break;
         case PlaybackState.previous:
