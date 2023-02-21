@@ -25,6 +25,7 @@ class Stories extends StatefulWidget {
   final Duration reverseImageSwitchDuration;
   final bool allowDragg;
   final Color underBorderColor;
+  final bool isPopped;
   final Function(int id, int sroryId)? onWatched;
 
   const Stories({
@@ -45,6 +46,7 @@ class Stories extends StatefulWidget {
     this.reverseImageSwitchDuration = const Duration(milliseconds: 200),
     this.allowDragg = true,
     this.underBorderColor = Colors.white,
+    this.isPopped = true,
   }) : super(key: key);
 
   @override
@@ -229,6 +231,7 @@ class _StoriesState extends State<Stories> {
                 storyAnimationController: storyAnimationController,
                 allowDragg: widget.allowDragg,
                 watchedController: watchedController,
+                isPopped: widget.isPopped,
               ),
             );
           },

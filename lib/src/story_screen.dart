@@ -26,9 +26,10 @@ class StoryScreen extends StatefulWidget {
   final Function(int id)? onWatched;
   final Function(int index)? scrollToItem;
   final StoryAnimationController? storyAnimationController;
-  bool? allowDragg;
+  bool allowDragg;
   final Function(bool isDragg)? onDragg;
   final StoriesWatchedController? watchedController;
+  final bool isPopped;
 
   StoryScreen({
     Key? key,
@@ -47,9 +48,10 @@ class StoryScreen extends StatefulWidget {
     this.onWatched,
     this.scrollToItem,
     this.storyAnimationController,
-    this.allowDragg,
+    required this.allowDragg,
     this.onDragg,
     this.watchedController,
+    required this.isPopped,
   }) : super(key: key);
 
   @override
@@ -140,11 +142,13 @@ class _StoryScreenState extends State<StoryScreen>
     if (_storyListen.currentStatus == StoryStatus.complete) {
       try {
         _animationController.forward();
-        if (_storyListen.mediaType == MediaType.video) {
-          widget.allowDragg = false;
-          widget.storyController.play?.call();
-        } else {
-          widget.allowDragg = true;
+        widget.storyController.play?.call();
+        if (widget.allowDragg) {
+          if (_storyListen.mediaType == MediaType.video) {
+            widget.allowDragg = false;
+          } else {
+            widget.allowDragg = true;
+          }
         }
       } catch (_) {
         _animationController.reset();
@@ -195,7 +199,7 @@ class _StoryScreenState extends State<StoryScreen>
         widget.watchedController?.setWatched(true, widget.id);
         widget.storyAnimationController?.index = _storyListen.currentStory;
         widget.storyAnimationController?.id = widget.id;
-        widget.onComplete!(widget.id);
+        widget.onComplete?.call(widget.id);
       }
     } else {
       _storyListen.pageIncrement();
@@ -216,7 +220,9 @@ class _StoryScreenState extends State<StoryScreen>
   void storyListener() {
     if (widget.storiesController.id == widget.storyController.id &&
         _storyListen.currentStatus == StoryStatus.complete) {
-      widget.allowDragg = false;
+      if (!widget.allowDragg) {
+        widget.allowDragg = false;
+      }
       _animationController.duration = _storyListen.getCurrentDuration();
       widget.storyController.status?.add(PlaybackState.repeat);
     }
@@ -246,7 +252,7 @@ class _StoryScreenState extends State<StoryScreen>
         statusBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: widget.allowDragg!
+        backgroundColor: widget.allowDragg
             ? const Color(0xFF062030).withOpacity(_opacity)
             : null,
         body: GestureDetector(
@@ -257,11 +263,10 @@ class _StoryScreenState extends State<StoryScreen>
               widget.storyController.status?.add(PlaybackState.play),
           onTapDown: (details) {
             _fingerOffset = details.globalPosition;
-            widget.storyController.status?.add(PlaybackState.pause);
           },
           onTapUp: (details) =>
               widget.storyController.status?.add(PlaybackState.play),
-          onLongPressStart: (details) =>
+          onLongPressStart: (_) =>
               widget.storyController.status?.add(PlaybackState.pause),
           onLongPressUp: () =>
               widget.storyController.status?.add(PlaybackState.play),
@@ -280,15 +285,15 @@ class _StoryScreenState extends State<StoryScreen>
                   fit: StackFit.expand,
                   children: [
                     Positioned(
-                      top: widget.allowDragg! ? _offset.dy : 0,
-                      left: widget.allowDragg! ? _offset.dx : 0,
+                      top: widget.allowDragg ? _offset.dy : 0,
+                      left: widget.allowDragg ? _offset.dx : 0,
                       child: Draggable(
                         maxSimultaneousDrags: 1,
                         hitTestBehavior: HitTestBehavior.translucent,
                         affinity: Axis.vertical,
                         feedback: const SizedBox.shrink(),
                         onDragUpdate: (details) {
-                          if (widget.allowDragg!) {
+                          if (widget.allowDragg) {
                             setState(() {
                               _offset = details.globalPosition - _fingerOffset;
                               double heightPercent = mediaHeigth / 100;
@@ -306,7 +311,7 @@ class _StoryScreenState extends State<StoryScreen>
                                 offsetPercent = 30;
                               }
                               scale = 1 - offsetPercent / 100;
-                              if (!widget.allowDragg!) {
+                              if (!widget.allowDragg) {
                                 scale = 1;
                               }
                               isDraging = true;
@@ -316,12 +321,15 @@ class _StoryScreenState extends State<StoryScreen>
                         onDragStarted: () {
                           radius = 40;
                           widget.onDragg?.call(true);
+                          if (_storyListen.mediaType == MediaType.video) {
+                            widget.allowDragg = false;
+                          }
                         },
                         onDragEnd: (details) {
                           if (details.velocity.pixelsPerSecond.dy > 100 ||
                               _offset.dy > mediaHeigth / 8) {
                             widget.scrollToItem!(_storyListen.currentStory);
-                            if (widget.allowDragg!) {
+                            if (widget.allowDragg) {
                               widget.storyAnimationController?.dx = _offset.dx +
                                   (MediaQuery.of(context).size.width *
                                       (1 - scale) /
@@ -342,17 +350,18 @@ class _StoryScreenState extends State<StoryScreen>
                                 MediaQuery.of(context).size.width * scale;
                             widget.watchedController
                                 ?.setWatched(true, widget.id);
-
-                            Navigator.of(context).pop();
+                            if (widget.isPopped) {
+                              Navigator.of(context).pop();
+                            }
                             return;
                           }
                           if (_offset.dy < mediaHeigth / 8 &&
-                              widget.allowDragg!) {
+                              widget.allowDragg) {
                             widget.onDragg?.call(false);
                             _offset = Offset.zero;
                             scale = 1;
                             radius = 0;
-                            if (widget.allowDragg!) {
+                            if (widget.allowDragg) {
                               widget.storyController.status
                                   ?.add(PlaybackState.play);
                             }
@@ -503,8 +512,9 @@ class _StoryScreenState extends State<StoryScreen>
 
                                         widget.watchedController
                                             ?.setWatched(true, widget.id);
-
-                                        Navigator.of(context).pop();
+                                        if (widget.isPopped) {
+                                          Navigator.of(context).pop();
+                                        }
                                       },
                                       child: Container(
                                         width: 50,

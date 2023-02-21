@@ -14,6 +14,7 @@ class StoriesOpen extends StatefulWidget {
   final bool isRepeat;
   final Color statusBarColor;
   final bool allowDragg;
+  final bool isPopped;
 
   const StoriesOpen({
     Key? key,
@@ -26,6 +27,7 @@ class StoriesOpen extends StatefulWidget {
     this.isRepeat = true,
     this.exitButton = false,
     this.allowDragg = false,
+    this.isPopped = false,
   }) : super(key: key);
 
   @override
@@ -78,6 +80,7 @@ class _StoriesOpenState extends State<StoriesOpen> {
         exitButton: widget.exitButton,
         isRepeat: widget.isRepeat,
         allowDragg: widget.allowDragg,
+        isPopped: widget.isPopped,
       ),
     );
   }

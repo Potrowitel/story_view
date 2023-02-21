@@ -23,6 +23,7 @@ class StorySwipe extends StatefulWidget {
   final StoryAnimationController storyAnimationController;
   final bool allowDragg;
   final StoriesWatchedController? watchedController;
+  final bool isPopped;
 
   final Function(int index) scrollToItem;
 
@@ -43,6 +44,7 @@ class StorySwipe extends StatefulWidget {
     required this.storyAnimationController,
     required this.allowDragg,
     this.watchedController,
+    required this.isPopped,
   }) : super(key: key);
 
   @override
@@ -82,6 +84,7 @@ class _StorySwipeState extends State<StorySwipe> {
         scrollToItem: widget.scrollToItem,
         storyAnimationController: widget.storyAnimationController,
         allowDragg: widget.allowDragg,
+        isPopped: widget.isPopped,
         onDragg: (isDragg) {
           setState(() {
             _isDragg = isDragg;
