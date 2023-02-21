@@ -64,7 +64,7 @@ class _StoriesState extends State<Stories> {
   late int _currentPage;
   late double x;
   int currentItemIndex = 0;
-  late double countItemOnScreen;
+  late int countItemOnScreen;
   late StoryAnimationController storyAnimationController;
   late StoriesWatchedController watchedController;
   void onPageComplete(int index) {
@@ -90,7 +90,8 @@ class _StoriesState extends State<Stories> {
         (MediaQuery.of(context).size.width - widget.cellWidth! + 7) * 0.00001 +
             widget.cellWidth! -
             6;
-    countItemOnScreen = MediaQuery.of(context).size.width / (itemWidth + 10);
+    countItemOnScreen =
+        (MediaQuery.of(context).size.width / (itemWidth + 10)).floor();
     double offset = (itemWidth + 10) * _storiesController.id!;
     if (currentItemIndex <= _storiesController.id! &&
         _storiesController.id! < countItemOnScreen + currentItemIndex) {
@@ -106,7 +107,7 @@ class _StoriesState extends State<Stories> {
       x = (widget.cellWidth! + 10.6) *
               (_storiesController.id! == widget.cells.length - 1
                   ? _storiesController.id!
-                  : _storiesController.id! - 1) -
+                  : _storiesController.id!) -
           offset;
     } else {
       _scrollController.animateTo(offset,
