@@ -217,6 +217,7 @@ class _StoryScreenState extends State<StoryScreen>
       _animationController.duration = _storyListen.getCurrentDuration();
       widget.storyController.status?.add(PlaybackState.repeat);
     }
+    _animationController.duration = _storyListen.getCurrentDuration();
   }
 
   @override
@@ -336,10 +337,9 @@ class _StoryScreenState extends State<StoryScreen>
                                 MediaQuery.of(context).size.height * scale;
                             widget.storyAnimationController!.width =
                                 MediaQuery.of(context).size.width * scale;
-                            if (widget.id > 0) {
-                              widget.watchedController
-                                  ?.setWatched(true, widget.id - 1);
-                            }
+                            widget.watchedController
+                                ?.setWatched(true, widget.id);
+
                             Navigator.of(context).pop();
                             return;
                           }
@@ -497,10 +497,10 @@ class _StoryScreenState extends State<StoryScreen>
                                             MediaQuery.of(context).size.height;
                                         widget.storyAnimationController!.width =
                                             MediaQuery.of(context).size.width;
-                                        if (widget.id > 0) {
-                                          widget.watchedController
-                                              ?.setWatched(true, widget.id - 1);
-                                        }
+
+                                        widget.watchedController
+                                            ?.setWatched(true, widget.id);
+
                                         Navigator.of(context).pop();
                                       },
                                       child: Container(
