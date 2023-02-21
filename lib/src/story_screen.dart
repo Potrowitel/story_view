@@ -190,6 +190,8 @@ class _StoryScreenState extends State<StoryScreen>
       } else {
         if (isDraging) return;
         widget.watchedController?.setWatched(true, widget.id);
+        widget.storyAnimationController?.index = _storyListen.currentStory;
+        widget.storyAnimationController?.id = widget.id;
         widget.onComplete!(widget.id);
       }
     } else {
