@@ -328,8 +328,10 @@ class _StoryScreenState extends State<StoryScreen>
                         onDragEnd: (details) {
                           if (details.velocity.pixelsPerSecond.dy > 100 ||
                               _offset.dy > mediaHeigth / 8) {
-                            widget.scrollToItem!(_storyListen.currentStory);
                             if (widget.allowDragg) {
+                              widget.scrollToItem
+                                  ?.call(_storyListen.currentStory);
+
                               widget.storyAnimationController?.dx = _offset.dx +
                                   (MediaQuery.of(context).size.width *
                                       (1 - scale) /
@@ -340,13 +342,13 @@ class _StoryScreenState extends State<StoryScreen>
                                       2);
                             }
                             widget.storyAnimationController?.opacity = _opacity;
-                            widget.storyAnimationController!.index =
+                            widget.storyAnimationController?.index =
                                 _storyListen.currentStory;
-                            widget.storyAnimationController!.id = widget.id;
-                            widget.storyAnimationController!.isOpen = false;
-                            widget.storyAnimationController!.heigth =
+                            widget.storyAnimationController?.id = widget.id;
+                            widget.storyAnimationController?.isOpen = false;
+                            widget.storyAnimationController?.heigth =
                                 MediaQuery.of(context).size.height * scale;
-                            widget.storyAnimationController!.width =
+                            widget.storyAnimationController?.width =
                                 MediaQuery.of(context).size.width * scale;
                             widget.watchedController
                                 ?.setWatched(true, widget.id);
@@ -495,19 +497,21 @@ class _StoryScreenState extends State<StoryScreen>
                                         50 + MediaQuery.of(context).padding.top,
                                     child: InkWell(
                                       onTap: () {
-                                        widget.scrollToItem!(widget.id);
-                                        widget.storyAnimationController!.id =
+                                        if (widget.allowDragg) {
+                                          widget.scrollToItem?.call(widget.id);
+                                        }
+                                        widget.storyAnimationController?.id =
                                             widget.id;
-                                        widget.storyAnimationController!.dx = 0;
-                                        widget.storyAnimationController!.dy = 0;
-                                        widget.storyAnimationController!
-                                            .isOpen = true;
-                                        widget.storyAnimationController!.index =
+                                        widget.storyAnimationController?.dx = 0;
+                                        widget.storyAnimationController?.dy = 0;
+                                        widget.storyAnimationController
+                                            ?.isOpen = true;
+                                        widget.storyAnimationController?.index =
                                             _storyListen.currentStory;
-                                        widget.storyAnimationController!
-                                                .heigth =
+                                        widget.storyAnimationController
+                                                ?.heigth =
                                             MediaQuery.of(context).size.height;
-                                        widget.storyAnimationController!.width =
+                                        widget.storyAnimationController?.width =
                                             MediaQuery.of(context).size.width;
 
                                         widget.watchedController

@@ -53,8 +53,8 @@ class _StoryAnimationState extends State<StoryAnimation>
   late Animation<double> heigthAnim;
   late Animation<double> widthAnim;
   late AnimationController animation;
-  late double height = widget.cellHeight!;
-  late double width = widget.cellWidth!;
+  late double height = widget.cellHeight ?? 0;
+  late double width = widget.cellWidth ?? 0;
   Widget? storyPreview;
   Widget? storiesPreview;
   Widget? storyBackground;
@@ -202,8 +202,8 @@ class _StoryAnimationState extends State<StoryAnimation>
       child: Scaffold(
         backgroundColor: const Color(0xFF2E445B).withOpacity(
             widget.storyAnimationController.opacity != null
-                ? widget.storyAnimationController.opacity! *
-                    backgroundOpacity.value
+                ? widget.storyAnimationController.opacity ??
+                    0 * backgroundOpacity.value
                 : backgroundOpacity.value),
         body: Stack(
           children: [
@@ -311,21 +311,23 @@ class _StoryAnimationState extends State<StoryAnimation>
                                                     end: Alignment.bottomCenter,
                                                     colors: [
                                                       widget
-                                                          .cells[widget
-                                                              .storyAnimationController
-                                                              .id]
-                                                          .stories[widget
-                                                              .storyAnimationController
-                                                              .index]
-                                                          .gradientStart!,
+                                                              .cells[widget
+                                                                  .storyAnimationController
+                                                                  .id]
+                                                              .stories[widget
+                                                                  .storyAnimationController
+                                                                  .index]
+                                                              .gradientStart ??
+                                                          Colors.black,
                                                       widget
-                                                          .cells[widget
-                                                              .storyAnimationController
-                                                              .id]
-                                                          .stories[widget
-                                                              .storyAnimationController
-                                                              .index]
-                                                          .gradientEnd!,
+                                                              .cells[widget
+                                                                  .storyAnimationController
+                                                                  .id]
+                                                              .stories[widget
+                                                                  .storyAnimationController
+                                                                  .index]
+                                                              .gradientEnd ??
+                                                          Colors.black,
                                                     ],
                                                   ),
                                                 ),
