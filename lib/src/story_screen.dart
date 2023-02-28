@@ -196,7 +196,6 @@ class _StoryScreenState extends State<StoryScreen>
         _pageController.jumpToPage(0);
       } else {
         if (isDraging) return;
-        widget.watchedController?.setWatched(true, widget.id);
         widget.storyAnimationController?.index = _storyListen.currentStory;
         widget.storyAnimationController?.id = widget.id;
         widget.onComplete?.call(widget.id);
@@ -351,8 +350,6 @@ class _StoryScreenState extends State<StoryScreen>
                                 MediaQuery.of(context).size.height * scale;
                             widget.storyAnimationController?.width =
                                 MediaQuery.of(context).size.width * scale;
-                            widget.watchedController
-                                ?.setWatched(true, widget.id);
                             if (widget.isPopped) {
                               Navigator.of(context).pop();
                             }
@@ -514,9 +511,6 @@ class _StoryScreenState extends State<StoryScreen>
                                             MediaQuery.of(context).size.height;
                                         widget.storyAnimationController?.width =
                                             MediaQuery.of(context).size.width;
-
-                                        widget.watchedController
-                                            ?.setWatched(true, widget.id);
                                         if (widget.isPopped) {
                                           Navigator.of(context).pop();
                                         }

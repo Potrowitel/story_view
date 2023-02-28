@@ -55,7 +55,6 @@ class _StorySwipeState extends State<StorySwipe> {
   late PageController _pageController;
   List<StoryScreen> storyPages = [];
   bool _isDragg = false;
-  int? saved;
   @override
   void initState() {
     super.initState();
@@ -69,10 +68,9 @@ class _StorySwipeState extends State<StorySwipe> {
         storiesController: widget.storiesController,
         watchedController: widget.watchedController,
         onWatched: (storyId) {
-          if (saved != i && saved != null) {
-            widget.watchedController?.setWatched(true, i - 1);
+          if (widget.cells[i].stories.length - 1 == storyId) {
+            widget.watchedController?.setWatched(true, i);
           }
-          saved = i;
           widget.onWatched?.call(i, storyId);
         },
         stories: widget.cells[i].stories,
