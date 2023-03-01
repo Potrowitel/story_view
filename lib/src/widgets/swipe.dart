@@ -68,10 +68,14 @@ class _StorySwipeState extends State<StorySwipe> {
         storiesController: widget.storiesController,
         watchedController: widget.watchedController,
         onWatched: (storyId) {
-          if (widget.cells[i].stories.length - 1 == storyId) {
+          if (widget.cells[i].stories.length - 2 == storyId &&
+              widget.cells[i].stories.length > 1) {
             widget.watchedController?.setWatched(true, i);
+            widget.onWatched?.call(i, storyId + 1);
+          } else if (widget.cells[i].stories.length == 1) {
+            widget.watchedController?.setWatched(true, i);
+            widget.onWatched?.call(i, storyId);
           }
-          widget.onWatched?.call(i, storyId);
         },
         stories: widget.cells[i].stories,
         onComplete: widget.onPageComplete,

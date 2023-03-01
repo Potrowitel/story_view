@@ -80,15 +80,16 @@ class _StoryScreenState extends State<StoryScreen>
         MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.height;
     mediaWidth =
         MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width;
-    _storyListen = StoryListen(
-        List.generate(
-          widget.stories.length,
-          (index) {
-            return StoryReady(story: widget.stories[index]);
-          },
-        ),
-        widget.initialStory);
 
+    _storyListen = StoryListen(
+      List.generate(
+        widget.stories.length,
+        (index) {
+          return StoryReady(story: widget.stories[index]);
+        },
+      ),
+      widget.initialStory,
+    );
     widget.storyController.status = StreamController<PlaybackState>();
 
     _storyListen.addListener(storyListener);
@@ -351,6 +352,10 @@ class _StoryScreenState extends State<StoryScreen>
                             widget.storyAnimationController?.width =
                                 MediaQuery.of(context).size.width * scale;
                             if (widget.isPopped) {
+                              if (widget.stories.length == 1) {
+                                widget.onWatched
+                                    ?.call(_storyListen.currentStory);
+                              }
                               Navigator.of(context).pop();
                             }
                             return;
@@ -495,9 +500,6 @@ class _StoryScreenState extends State<StoryScreen>
                                         50 + MediaQuery.of(context).padding.top,
                                     child: InkWell(
                                       onTap: () {
-                                        if (widget.isPopped) {
-                                          widget.scrollToItem?.call(widget.id);
-                                        }
                                         widget.storyAnimationController?.id =
                                             widget.id;
                                         widget.storyAnimationController?.dx = 0;
@@ -512,6 +514,11 @@ class _StoryScreenState extends State<StoryScreen>
                                         widget.storyAnimationController?.width =
                                             MediaQuery.of(context).size.width;
                                         if (widget.isPopped) {
+                                          if (widget.stories.length == 1) {
+                                            widget.onWatched?.call(
+                                                _storyListen.currentStory);
+                                          }
+                                          widget.scrollToItem?.call(widget.id);
                                           Navigator.of(context).pop();
                                         }
                                       },
