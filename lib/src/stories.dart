@@ -265,11 +265,12 @@ class _StoriesState extends State<Stories> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: widget.cellHeight,
-      child: ListView.builder(
+      child: ListView.separated(
         key: _key,
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
         itemCount: widget.cells.length,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         itemBuilder: (context, index) {
           return Stack(
             alignment: Alignment.topCenter,
@@ -278,65 +279,60 @@ class _StoriesState extends State<Stories> {
                 onTap: () {
                   _onStorySwipeClicked(index);
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0).copyWith(
-                      left: index == 0 ? 16 : 5,
-                      right: index == widget.cells.length - 1 ? 16 : 5),
-                  child: Container(
-                    width: widget.cellWidth ?? 80,
-                    height: widget.cellHeight ?? 80,
-                    padding: const EdgeInsets.all(2),
-                    decoration: widget.allowBorder
-                        ? watchedController.watched(index)
-                            ? BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                color: const Color(0xFFB6BCC3).withOpacity(0.5),
-                              )
-                            : BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                gradient: const LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Color(0xFFF4C43C),
-                                    Color(0xFF2AB67C),
-                                  ],
-                                ),
-                              )
-                        : null,
-                    child: Container(
-                      width: widget.cellWidth ?? 79,
-                      height: widget.cellHeight ?? 79,
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: widget.underBorderColor,
-                        borderRadius: BorderRadius.circular(13),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(0),
-                        child: CachedNetworkImage(
-                          imageUrl: widget.cells[index].iconUrl,
-                          fit: BoxFit.contain,
-                          errorWidget: (context, url, error) {
-                            return Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                color: Colors.black);
-                          },
-                          imageBuilder: (context, imageProvider) {
-                            return Container(
-                              width: widget.cellWidth ?? 70,
-                              height: widget.cellHeight ?? 70,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
-                                ),
+                child: Container(
+                  width: widget.cellWidth ?? 80,
+                  height: widget.cellHeight ?? 80,
+                  padding: const EdgeInsets.all(2),
+                  decoration: widget.allowBorder
+                      ? watchedController.watched(index)
+                          ? BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              color: const Color(0xFFB6BCC3).withOpacity(0.5),
+                            )
+                          : BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color(0xFFF4C43C),
+                                  Color(0xFF2AB67C),
+                                ],
                               ),
-                            );
-                          },
-                        ),
+                            )
+                      : null,
+                  child: Container(
+                    width: widget.cellWidth ?? 79,
+                    height: widget.cellHeight ?? 79,
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: widget.underBorderColor,
+                      borderRadius: BorderRadius.circular(13),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(0),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.cells[index].iconUrl,
+                        fit: BoxFit.contain,
+                        errorWidget: (context, url, error) {
+                          return Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              color: Colors.black);
+                        },
+                        imageBuilder: (context, imageProvider) {
+                          return Container(
+                            width: widget.cellWidth ?? 70,
+                            height: widget.cellHeight ?? 70,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -345,6 +341,7 @@ class _StoriesState extends State<Stories> {
             ],
           );
         },
+        separatorBuilder: (context, index) => const SizedBox(width: 5),
       ),
     );
   }
