@@ -90,11 +90,6 @@ class _StoryScreenState extends State<StoryScreen>
       ),
       widget.initialStory,
     );
-    if (widget.stories.length == 1) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        widget.onWatched?.call(_storyListen.currentStory);
-      });
-    }
     widget.storyController.status = StreamController<PlaybackState>();
     _storyListen.addListener(storyListener);
     widget.storyController.status?.stream.listen((event) {
