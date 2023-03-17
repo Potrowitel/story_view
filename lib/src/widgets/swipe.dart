@@ -98,9 +98,8 @@ class _StorySwipeState extends State<StorySwipe> {
 
   void listener() {
     if (widget.cells[_pageController.page!.toInt()].stories.length == 1) {
-      widget.watchedController
-          ?.setWatched(true, _pageController.page!.toInt() + 1);
-      widget.onWatched?.call(_pageController.page!.toInt() + 1, 0);
+      widget.watchedController?.setWatched(true, _pageController.page!.toInt());
+      widget.onWatched?.call(_pageController.page!.toInt(), 0);
     }
     setState(() {});
   }
