@@ -62,10 +62,10 @@ class _StoryAnimationState extends State<StoryAnimation>
   @override
   void initState() {
     dyAnimation = widget.animation.drive(
-        Tween(begin: widget.dy + 9, end: widget.storyAnimationController.dy)
+        Tween(begin: widget.dy + 4, end: widget.storyAnimationController.dy)
             .chain(CurveTween(curve: Curves.easeInOut)));
     dxAnimation = widget.animation.drive(
-        Tween(begin: widget.dx + 1, end: widget.storyAnimationController.dx)
+        Tween(begin: widget.dx, end: widget.storyAnimationController.dx)
             .chain(CurveTween(curve: Curves.easeInOut)));
 
     backgroundOpacity = widget.animation.drive(Tween<double>(
@@ -73,7 +73,7 @@ class _StoryAnimationState extends State<StoryAnimation>
         .chain(CurveTween(curve: Curves.easeInOut)));
 
     heigthAnim = widget.animation.drive(Tween(
-            begin: widget.cellHeight! - 18,
+            begin: widget.cellHeight! - 8,
             end: widget.storyAnimationController.heigth)
         .chain(CurveTween(curve: Curves.easeInOut)));
     widthAnim = widget.animation.drive(Tween(
@@ -234,7 +234,7 @@ class _StoryAnimationState extends State<StoryAnimation>
                                 duration: const Duration(),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      16 * borderAnimation.value),
+                                      13 * borderAnimation.value),
                                   child: storiesPreview,
                                 ),
                               ),

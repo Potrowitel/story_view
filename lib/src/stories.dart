@@ -27,6 +27,7 @@ class Stories extends StatefulWidget {
   final Color underBorderColor;
   final bool isPopped;
   final Function(int id, int sroryId)? onWatched;
+  final double padding;
 
   const Stories({
     Key? key,
@@ -47,6 +48,7 @@ class Stories extends StatefulWidget {
     this.allowDragg = true,
     this.underBorderColor = Colors.white,
     this.isPopped = true,
+    this.padding = 5,
   }) : super(key: key);
 
   @override
@@ -91,32 +93,28 @@ class _StoriesState extends State<Stories> {
             widget.cellWidth! -
             6;
     countItemOnScreen =
-        (MediaQuery.of(context).size.width / (itemWidth + 10)).floor();
-    double offset = (itemWidth + 10) * _storiesController.id!;
-    if (currentItemIndex <= _storiesController.id! &&
-        _storiesController.id! < countItemOnScreen + currentItemIndex) {
-      x = (widget.cellWidth! +
-          42 -
-          _scrollController.offset -
-          13 +
-          (_storiesController.id! - 1) * (widget.cellWidth! + 10));
-    } else if (_storiesController.id! >= widget.cells.length - 2) {
-      double offset = (widget.cellWidth! + 10) * (_storiesController.id! - 4);
+        (MediaQuery.of(context).size.width / (itemWidth + widget.padding * 2))
+            .floor();
+    double offset = (itemWidth + widget.padding) * _storiesController.id!;
+    if (_storiesController.id! >= widget.cells.length - countItemOnScreen) {
+      double offset = _scrollController.position.maxScrollExtent;
       _scrollController.animateTo(offset,
           duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
-      x = (widget.cellWidth! + 10.6) *
-              (_storiesController.id! == widget.cells.length - 1
-                  ? _storiesController.id!
-                  : _storiesController.id!) -
-          offset;
+      x = ((_storiesController.id!) * (widget.cellWidth! + widget.padding) +
+              20) -
+          offset +
+          23;
+    } else if (currentItemIndex <= _storiesController.id! &&
+        _storiesController.id! < countItemOnScreen + currentItemIndex) {
+      x = ((_storiesController.id!) * (widget.cellWidth! + widget.padding) +
+              20) -
+          _scrollController.offset;
     } else {
       _scrollController.animateTo(offset,
           duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
-      x = (widget.cellWidth! +
-          42 -
-          offset -
-          13 +
-          (_storiesController.id! - 1) * (widget.cellWidth! + 10));
+      x = ((_storiesController.id!) * (widget.cellWidth! + widget.padding) +
+              20) -
+          offset;
     }
   }
 
@@ -152,8 +150,9 @@ class _StoriesState extends State<Stories> {
   }
 
   void offsetListener() {
-    currentItemIndex =
-        ((_scrollController.offset + 10) / (widget.cellWidth! + 10)).floor();
+    currentItemIndex = ((_scrollController.offset + widget.padding * 2) /
+            (widget.cellWidth! + widget.padding * 2))
+        .floor();
   }
 
   void pageListener() {
@@ -190,11 +189,8 @@ class _StoriesState extends State<Stories> {
 
     var position = box.localToGlobal(Offset.zero);
     var y = position.dy;
-    x = (widget.cellWidth! +
-        42 -
-        _scrollController.offset -
-        13 +
-        (_storiesController.id! - 1) * (widget.cellWidth! + 10));
+    x = ((_storiesController.id!) * (widget.cellWidth! + widget.padding) + 20) -
+        _scrollController.offset;
     storyAnimationController = StoryAnimationController(
       id: initialPage,
       index: 0,
@@ -318,7 +314,7 @@ class _StoriesState extends State<Stories> {
                           return Container(
                               width: double.infinity,
                               height: double.infinity,
-                              color: Colors.black);
+                              color: Colors.white);
                         },
                         imageBuilder: (context, imageProvider) {
                           return Container(
@@ -341,7 +337,7 @@ class _StoriesState extends State<Stories> {
             ],
           );
         },
-        separatorBuilder: (context, index) => const SizedBox(width: 5),
+        separatorBuilder: (context, index) => SizedBox(width: widget.padding),
       ),
     );
   }
