@@ -96,25 +96,22 @@ class _StoriesState extends State<Stories> {
         (MediaQuery.of(context).size.width / (itemWidth + widget.padding * 2))
             .floor();
     double offset = (itemWidth + widget.padding) * _storiesController.id!;
-    if (_storiesController.id! >= widget.cells.length - countItemOnScreen) {
-      // if (widget.cells.length >= 10) {
-      //   double offset = _scrollController.position.maxScrollExtent;
-      //   _scrollController.animateTo(offset,
-      //       duration: const Duration(milliseconds: 200),
-      //       curve: Curves.easeInOut);
-      //   x = ((_storiesController.id!) * (widget.cellWidth! + widget.padding) +
-      //           20) -
-      //       offset;
-      // } else
-      if (_storiesController.id! + 1 > countItemOnScreen) {
-        double offset = _scrollController.position.maxScrollExtent;
-        _scrollController.animateTo(offset,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut);
-        x = ((_storiesController.id!) * (widget.cellWidth! + widget.padding) +
-                20) -
-            offset;
-      }
+    if (widget.cells.length >= 10 &&
+        _storiesController.id! >= widget.cells.length - countItemOnScreen) {
+      double offset = _scrollController.position.maxScrollExtent;
+      _scrollController.animateTo(offset,
+          duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+      x = ((_storiesController.id!) * (widget.cellWidth! + widget.padding) +
+              20) -
+          offset;
+    } else if (_storiesController.id! + 1 > countItemOnScreen &&
+        widget.cells.length <= 10) {
+      double offset = _scrollController.position.maxScrollExtent;
+      _scrollController.animateTo(offset,
+          duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
+      x = ((_storiesController.id!) * (widget.cellWidth! + widget.padding) +
+              20) -
+          offset;
     } else if (currentItemIndex <= _storiesController.id! &&
         _storiesController.id! < countItemOnScreen + currentItemIndex) {
       x = ((_storiesController.id!) * (widget.cellWidth! + widget.padding) +
