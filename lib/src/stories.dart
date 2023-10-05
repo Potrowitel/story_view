@@ -72,10 +72,10 @@ class _StoriesState extends State<Stories> {
   void onPageComplete(int index) {
     if (_pageController.page == widget.cells.length - 1) {
       if (!mounted) return;
-      if (Navigator.canPop(context)) {
-        scrollToItem(index);
-        Navigator.of(context).pop();
-      }
+      // if (Navigator.canPop(context)) {
+      scrollToItem(index);
+      Navigator.of(context, rootNavigator: true).pop();
+      // }
     }
 
     for (var controller in _storyControllers) {
