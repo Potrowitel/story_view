@@ -72,10 +72,10 @@ class _StoriesState extends State<Stories> {
   void onPageComplete(int index) {
     if (_pageController.page == widget.cells.length - 1) {
       if (!mounted) return;
-      if (Navigator.canPop(context)) {
-        scrollToItem(index);
-        Navigator.of(context).pop();
-      }
+      // if (Navigator.canPop(context)) {
+      scrollToItem(index);
+      Navigator.of(context, rootNavigator: true).pop();
+      // }
     }
 
     for (var controller in _storyControllers) {
@@ -206,14 +206,14 @@ class _StoriesState extends State<Stories> {
       width: MediaQuery.of(context).size.width,
       dy: widget.cells[initialPage].stories.first.meadiaType == MediaType.video
           ? 0.0
-          : MediaQuery.of(context).viewPadding.top -
-              MediaQuery.of(context).viewPadding.bottom,
+          : 0,
+      // MediaQuery.of(context).viewPadding.top -
+      //     MediaQuery.of(context).viewPadding.bottom,
       dx: 0,
       isOpen: true,
     );
 
-    Navigator.push(
-      context,
+    Navigator.of(context, rootNavigator: true).push(
       PageRouteBuilder(
           opaque: false,
           transitionDuration: widget.transitionDuration,
@@ -308,11 +308,14 @@ class _StoriesState extends State<Stories> {
                   child: Container(
                     width: widget.cellWidth ?? 79,
                     height: widget.cellHeight ?? 79,
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: widget.underBorderColor,
-                      borderRadius: BorderRadius.circular(13),
-                    ),
+                    padding:
+                        widget.allowBorder ? const EdgeInsets.all(2) : null,
+                    decoration: widget.allowBorder
+                        ? BoxDecoration(
+                            color: widget.underBorderColor,
+                            borderRadius: BorderRadius.circular(13),
+                          )
+                        : null,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(0),
                       child: CachedNetworkImage(
