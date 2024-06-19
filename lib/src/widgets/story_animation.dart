@@ -98,41 +98,88 @@ class _StoryAnimationState extends State<StoryAnimation>
     firstAnimationImage = widget.animation.drive(Tween(begin: 1, end: 0));
     secondAnimationImage = animation.drive(Tween(begin: 1, end: 0));
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      storyPreview = CachedNetworkImage(
-        imageUrl: widget.cells[widget.storyAnimationController.id]
-            .stories[widget.storyAnimationController.index].url,
-        errorWidget: (context, url, error) {
-          return const Center(
-            child: Text(
-              'Проверьте интернет соединение',
-              style: TextStyle(color: Colors.white),
-            ),
-          );
-        },
-        progressIndicatorBuilder: (context, url, progress) {
-          return Center(
-            child: SizedBox(
-              width: 60,
-              height: 60,
-              child: CircularProgressIndicator(
-                value: progress.progress,
-                color: Colors.blueGrey,
-                strokeWidth: 3.0,
+      if (widget.cells[widget.storyAnimationController.id]
+          .stories[widget.storyAnimationController.index].url
+          .contains('http')) {
+        storyPreview = CachedNetworkImage(
+          imageUrl: widget.cells[widget.storyAnimationController.id]
+              .stories[widget.storyAnimationController.index].url,
+          errorWidget: (context, url, error) {
+            return const Center(
+              child: Text(
+                'Проверьте интернет соединение',
+                style: TextStyle(color: Colors.white),
               ),
-            ),
-          );
-        },
-        imageBuilder: (context, imageProvider) {
-          if (widget.cells[widget.storyAnimationController.id]
-                  .stories[widget.storyAnimationController.index].backType !=
-              null) {
-            return Image(
-              alignment: Alignment.bottomCenter,
-              image: imageProvider,
-              fit: BoxFit.fitWidth,
             );
-          }
-          return ClipRRect(
+          },
+          progressIndicatorBuilder: (context, url, progress) {
+            return Center(
+              child: SizedBox(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(
+                  value: progress.progress,
+                  color: Colors.blueGrey,
+                  strokeWidth: 3.0,
+                ),
+              ),
+            );
+          },
+          imageBuilder: (context, imageProvider) {
+            if (widget.cells[widget.storyAnimationController.id]
+                    .stories[widget.storyAnimationController.index].backType !=
+                null) {
+              return Image(
+                alignment: Alignment.bottomCenter,
+                image: imageProvider,
+                fit: BoxFit.fitWidth,
+              );
+            }
+            return ClipRRect(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                    child: Container(
+                      color: Colors.black.withOpacity(0.3),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      } else {
+        if (widget.cells[widget.storyAnimationController.id]
+                .stories[widget.storyAnimationController.index].backType !=
+            null) {
+          storyPreview = Image(
+            alignment: Alignment.bottomCenter,
+            image: AssetImage(widget.cells[widget.storyAnimationController.id]
+                .stories[widget.storyAnimationController.index].url),
+            fit: BoxFit.fitWidth,
+          );
+        } else {
+          storyPreview = ClipRRect(
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -140,7 +187,10 @@ class _StoryAnimationState extends State<StoryAnimation>
                   child: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: imageProvider,
+                        image: AssetImage(widget
+                            .cells[widget.storyAnimationController.id]
+                            .stories[widget.storyAnimationController.index]
+                            .url),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -155,7 +205,10 @@ class _StoryAnimationState extends State<StoryAnimation>
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: imageProvider,
+                      image: AssetImage(widget
+                          .cells[widget.storyAnimationController.id]
+                          .stories[widget.storyAnimationController.index]
+                          .url),
                       fit: BoxFit.fitWidth,
                     ),
                   ),
@@ -163,8 +216,8 @@ class _StoryAnimationState extends State<StoryAnimation>
               ],
             ),
           );
-        },
-      );
+        }
+      }
       storiesPreview = widget.cells[widget.index].iconUrl.contains('http')
           ? CachedNetworkImage(
               imageUrl: widget.cells[widget.index].iconUrl,
