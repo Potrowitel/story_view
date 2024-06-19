@@ -318,29 +318,42 @@ class _StoriesState extends State<Stories> {
                         : null,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(0),
-                      child: CachedNetworkImage(
-                        imageUrl: widget.cells[index].iconUrl,
-                        fit: BoxFit.contain,
-                        errorWidget: (context, url, error) {
-                          return Container(
-                              width: double.infinity,
-                              height: double.infinity,
-                              color: Colors.white);
-                        },
-                        imageBuilder: (context, imageProvider) {
-                          return Container(
-                            width: widget.cellWidth ?? 70,
-                            height: widget.cellHeight ?? 70,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
+                      child: widget.cells[index].iconUrl.contains('http')
+                          ? CachedNetworkImage(
+                              imageUrl: widget.cells[index].iconUrl,
+                              fit: BoxFit.contain,
+                              errorWidget: (context, url, error) {
+                                return Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    color: Colors.white);
+                              },
+                              imageBuilder: (context, imageProvider) {
+                                return Container(
+                                  width: widget.cellWidth ?? 70,
+                                  height: widget.cellHeight ?? 70,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(
+                              width: widget.cellWidth ?? 70,
+                              height: widget.cellHeight ?? 70,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                image: DecorationImage(
+                                  image:
+                                      AssetImage(widget.cells[index].iconUrl),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
-                          );
-                        },
-                      ),
                     ),
                   ),
                 ),
