@@ -165,10 +165,22 @@ class _StoryAnimationState extends State<StoryAnimation>
           );
         },
       );
-      storiesPreview = CachedNetworkImage(
-        imageUrl: widget.cells[widget.index].iconUrl,
-        fit: BoxFit.cover,
-      );
+      storiesPreview = widget.cells[widget.index].iconUrl.contains('http')
+          ? CachedNetworkImage(
+              imageUrl: widget.cells[widget.index].iconUrl,
+              fit: BoxFit.cover,
+            )
+          : Container(
+              width: widget.cellWidth ?? 70,
+              height: widget.cellHeight ?? 70,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: AssetImage(widget.cells[widget.index].iconUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            );
       storyBackground = StoryBackground(
         type: widget.cells[widget.storyAnimationController.id]
             .stories[widget.storyAnimationController.index].backType,
