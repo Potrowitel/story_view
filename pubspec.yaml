@@ -12,8 +12,8 @@ dependencies:
   #flutter_advanced_avatar: ^1.0.0+1
   #story_view: ^0.13.1
   video_player: ^2.2.19
-  flutter_cache_manager: ^3.1.2
-  cached_network_image: ^3.1.0
+  flutter_cache_manager: ^3.3.2
+  cached_network_image: ^3.3.1
 
 dev_dependencies:
   flutter_test:
