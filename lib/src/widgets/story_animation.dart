@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/widgets/story_background.dart';
 
@@ -21,6 +22,7 @@ class StoryAnimation extends StatefulWidget {
   final StoryAnimationController storyAnimationController;
   final Duration duration;
   final Duration reverseDuration;
+  final BaseCacheManager? cacheManager;
 
   const StoryAnimation({
     Key? key,
@@ -36,6 +38,7 @@ class StoryAnimation extends StatefulWidget {
     required this.storyAnimationController,
     required this.duration,
     required this.reverseDuration,
+    this.cacheManager,
   }) : super(key: key);
 
   @override
@@ -104,6 +107,7 @@ class _StoryAnimationState extends State<StoryAnimation>
         storyPreview = CachedNetworkImage(
           imageUrl: widget.cells[widget.storyAnimationController.id]
               .stories[widget.storyAnimationController.index].url,
+          cacheManager: widget.cacheManager,
           errorWidget: (context, url, error) {
             return const Center(
               child: Text(
@@ -221,6 +225,7 @@ class _StoryAnimationState extends State<StoryAnimation>
       storiesPreview = widget.cells[widget.index].iconUrl.contains('http')
           ? CachedNetworkImage(
               imageUrl: widget.cells[widget.index].iconUrl,
+              cacheManager: widget.cacheManager,
               fit: BoxFit.cover,
             )
           : Container(
@@ -235,6 +240,7 @@ class _StoryAnimationState extends State<StoryAnimation>
               ),
             );
       storyBackground = StoryBackground(
+        cacheManager: widget.cacheManager,
         type: widget.cells[widget.storyAnimationController.id]
             .stories[widget.storyAnimationController.index].backType,
         url: widget.cells[widget.storyAnimationController.id]

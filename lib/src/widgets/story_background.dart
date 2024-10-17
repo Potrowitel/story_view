@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:stories/src/models/story_back.dart';
 
 class StoryBackground extends StatelessWidget {
@@ -7,6 +8,7 @@ class StoryBackground extends StatelessWidget {
   final Color? gradientStart;
   final Color? gradientEnd;
   final String? url;
+  final BaseCacheManager? cacheManager;
 
   const StoryBackground({
     Key? key,
@@ -14,6 +16,7 @@ class StoryBackground extends StatelessWidget {
     this.gradientEnd,
     this.gradientStart,
     this.url,
+    this.cacheManager,
   }) : super(key: key);
 
   @override
@@ -35,6 +38,7 @@ class StoryBackground extends StatelessWidget {
           : null,
       child: type == StoryBack.image
           ? CachedNetworkImage(
+              cacheManager: cacheManager,
               imageUrl: url ?? '',
               fit: BoxFit.cover,
             )

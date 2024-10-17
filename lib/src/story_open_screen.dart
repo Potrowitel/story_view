@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/story_screen.dart';
 import 'package:stories/stories.dart';
@@ -15,6 +16,7 @@ class StoriesOpen extends StatefulWidget {
   final Color statusBarColor;
   final bool allowDragg;
   final bool isPopped;
+  final BaseCacheManager cacheManager;
 
   const StoriesOpen({
     Key? key,
@@ -28,6 +30,7 @@ class StoriesOpen extends StatefulWidget {
     this.exitButton = false,
     this.allowDragg = false,
     this.isPopped = false,
+    required this.cacheManager,
   }) : super(key: key);
 
   @override
@@ -71,6 +74,7 @@ class _StoriesOpenState extends State<StoriesOpen> {
       child: StoryScreen(
         id: 0,
         isOpen: true,
+        cacheManager: widget.cacheManager,
         storyController: controller,
         storiesController: storiesController,
         stories: widget.cell.stories,

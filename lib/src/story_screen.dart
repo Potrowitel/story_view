@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/models/story.dart';
 import 'package:stories/src/models/story_process.dart';
@@ -30,6 +31,7 @@ class StoryScreen extends StatefulWidget {
   final Function(bool isDragg)? onDragg;
   final StoriesWatchedController? watchedController;
   final bool isPopped;
+  final BaseCacheManager? cacheManager;
 
   StoryScreen({
     Key? key,
@@ -51,6 +53,7 @@ class StoryScreen extends StatefulWidget {
     required this.allowDragg,
     this.onDragg,
     this.watchedController,
+    this.cacheManager,
     required this.isPopped,
   }) : super(key: key);
 
@@ -398,6 +401,7 @@ class _StoryScreenState extends State<StoryScreen>
                                           height: mediaHeigth,
                                           child: StoryItem(
                                             id: index,
+                                            cacheManager: widget.cacheManager,
                                             globalId: widget.id,
                                             storyController:
                                                 widget.storyController,

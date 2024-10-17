@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/helper/behavior_helper.dart';
 import 'package:stories/src/models/story.dart';
@@ -24,6 +25,7 @@ class StorySwipe extends StatefulWidget {
   final bool allowDragg;
   final StoriesWatchedController? watchedController;
   final bool isPopped;
+  final BaseCacheManager? cacheManager;
 
   final Function(int index) scrollToItem;
 
@@ -45,6 +47,7 @@ class StorySwipe extends StatefulWidget {
     required this.allowDragg,
     this.watchedController,
     required this.isPopped,
+    this.cacheManager,
   }) : super(key: key);
 
   @override
@@ -64,6 +67,7 @@ class _StorySwipeState extends State<StorySwipe> {
       widget.cells.length,
       (i) => StoryScreen(
         id: i,
+        cacheManager: widget.cacheManager,
         storyController: widget.storyControllers[i],
         storiesController: widget.storiesController,
         watchedController: widget.watchedController,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/models/story.dart';
 import 'package:stories/src/models/story_process.dart';
@@ -16,6 +17,7 @@ class StoryItem extends StatefulWidget {
   final int? timeout;
   final ValueChanged<StoryProcess> onProcess;
   final int globalId;
+  final BaseCacheManager? cacheManager;
   // final Function(int id)? onLoading;
   // final Function(int id)? onDownloading;
   // final Function(int id)? onTimeout;
@@ -31,6 +33,7 @@ class StoryItem extends StatefulWidget {
     this.loadingWidget,
     this.errorWidget,
     this.timeoutWidget,
+    this.cacheManager,
     // this.onError,
     // this.onLoading,
     // this.onReady,
@@ -61,6 +64,7 @@ class _StoryItemState extends State<StoryItem> {
                 url: widget.story.backUrl,
                 gradientStart: widget.story.gradientStart,
                 gradientEnd: widget.story.gradientEnd,
+                cacheManager: widget.cacheManager,
               ),
             ),
           if (widget.story.meadiaType == MediaType.image)
@@ -74,6 +78,7 @@ class _StoryItemState extends State<StoryItem> {
                 errorWidget: widget.errorWidget,
                 loadingWidget: widget.loadingWidget,
                 onProcess: widget.onProcess,
+                cacheManager: widget.cacheManager,
                 // onReady: widget.onReady,
                 // onLoading: widget.onLoading,
                 // onError: widget.onError,

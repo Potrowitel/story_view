@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:stories/src/controller.dart';
 import 'package:stories/src/story_screen.dart';
 import 'package:stories/src/widgets/multitouch.dart';
@@ -28,6 +29,7 @@ class Stories extends StatefulWidget {
   final bool isPopped;
   final Function(int id, int sroryId)? onWatched;
   final double padding;
+  final BaseCacheManager? cacheManager;
 
   const Stories({
     Key? key,
@@ -49,6 +51,7 @@ class Stories extends StatefulWidget {
     this.underBorderColor = Colors.white,
     this.isPopped = true,
     this.padding = 5,
+    this.cacheManager,
   }) : super(key: key);
 
   @override
@@ -221,6 +224,7 @@ class _StoriesState extends State<Stories> {
           pageBuilder: (context, animation, secondaryAnimation) {
             return OnlyOnePointerRecognizerWidget(
               child: StorySwipe(
+                cacheManager: widget.cacheManager,
                 statusBarColor: widget.statusBarColor,
                 cells: widget.cells,
                 exitButton: widget.exitButton,
@@ -247,6 +251,7 @@ class _StoriesState extends State<Stories> {
             double statusBarHeigth = MediaQuery.of(context).viewPadding.top;
             return widget.allowAnimation
                 ? StoryAnimation(
+                    cacheManager: widget.cacheManager,
                     storyCell: widget.cells[initialPage],
                     cells: widget.cells,
                     index: _storiesController.id!,
@@ -322,6 +327,7 @@ class _StoriesState extends State<Stories> {
                           ? CachedNetworkImage(
                               imageUrl: widget.cells[index].iconUrl,
                               fit: BoxFit.contain,
+                              cacheManager: widget.cacheManager,
                               errorWidget: (context, url, error) {
                                 return Container(
                                     width: double.infinity,

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:stories/src/models/story_process.dart';
 import 'package:stories/src/models/story.dart';
 
@@ -11,6 +12,7 @@ class ImageWiget extends StatefulWidget {
   final Widget? loadingWidget;
   final Widget? errorWidget;
   final ValueChanged<StoryProcess>? onProcess;
+  final BaseCacheManager? cacheManager;
 
   const ImageWiget({
     Key? key,
@@ -19,6 +21,7 @@ class ImageWiget extends StatefulWidget {
     this.onProcess,
     this.loadingWidget,
     this.errorWidget,
+    this.cacheManager,
   }) : super(key: key);
 
   @override
@@ -85,6 +88,7 @@ class _ImageWigetState extends State<ImageWiget> {
   Widget build(BuildContext context) {
     return widget.story.url.contains('http')
         ? CachedNetworkImage(
+            cacheManager: widget.cacheManager,
             imageUrl: widget.story.url,
             errorWidget: (context, url, error) {
               _onProcess(StoryStatus.error, error: error);
