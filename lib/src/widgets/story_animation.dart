@@ -23,6 +23,7 @@ class StoryAnimation extends StatefulWidget {
   final Duration duration;
   final Duration reverseDuration;
   final BaseCacheManager? cacheManager;
+  final Map<String, String>? headers;
 
   const StoryAnimation({
     Key? key,
@@ -39,6 +40,7 @@ class StoryAnimation extends StatefulWidget {
     required this.duration,
     required this.reverseDuration,
     this.cacheManager,
+    this.headers,
   }) : super(key: key);
 
   @override
@@ -108,6 +110,7 @@ class _StoryAnimationState extends State<StoryAnimation>
           imageUrl: widget.cells[widget.storyAnimationController.id]
               .stories[widget.storyAnimationController.index].url,
           cacheManager: widget.cacheManager,
+          httpHeaders: widget.headers,
           errorWidget: (context, url, error) {
             return const Center(
               child: Text(
@@ -226,6 +229,7 @@ class _StoryAnimationState extends State<StoryAnimation>
           ? CachedNetworkImage(
               imageUrl: widget.cells[widget.index].iconUrl,
               cacheManager: widget.cacheManager,
+              httpHeaders: widget.headers,
               fit: BoxFit.cover,
             )
           : Container(
@@ -241,6 +245,7 @@ class _StoryAnimationState extends State<StoryAnimation>
             );
       storyBackground = StoryBackground(
         cacheManager: widget.cacheManager,
+        headers: widget.headers,
         type: widget.cells[widget.storyAnimationController.id]
             .stories[widget.storyAnimationController.index].backType,
         url: widget.cells[widget.storyAnimationController.id]

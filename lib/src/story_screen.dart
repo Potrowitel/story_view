@@ -32,6 +32,7 @@ class StoryScreen extends StatefulWidget {
   final StoriesWatchedController? watchedController;
   final bool isPopped;
   final BaseCacheManager? cacheManager;
+  final Map<String, String>? headers;
 
   StoryScreen({
     Key? key,
@@ -55,6 +56,7 @@ class StoryScreen extends StatefulWidget {
     this.watchedController,
     this.cacheManager,
     required this.isPopped,
+    this.headers,
   }) : super(key: key);
 
   @override
@@ -402,6 +404,7 @@ class _StoryScreenState extends State<StoryScreen>
                                           child: StoryItem(
                                             id: index,
                                             cacheManager: widget.cacheManager,
+                                            headers: widget.headers,
                                             globalId: widget.id,
                                             storyController:
                                                 widget.storyController,

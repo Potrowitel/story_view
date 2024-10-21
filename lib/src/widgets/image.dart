@@ -13,6 +13,7 @@ class ImageWiget extends StatefulWidget {
   final Widget? errorWidget;
   final ValueChanged<StoryProcess>? onProcess;
   final BaseCacheManager? cacheManager;
+  final Map<String, String>? headers;
 
   const ImageWiget({
     Key? key,
@@ -22,6 +23,7 @@ class ImageWiget extends StatefulWidget {
     this.loadingWidget,
     this.errorWidget,
     this.cacheManager,
+    this.headers,
   }) : super(key: key);
 
   @override
@@ -89,6 +91,7 @@ class _ImageWigetState extends State<ImageWiget> {
     return widget.story.url.contains('http')
         ? CachedNetworkImage(
             cacheManager: widget.cacheManager,
+            httpHeaders: widget.headers,
             imageUrl: widget.story.url,
             errorWidget: (context, url, error) {
               _onProcess(StoryStatus.error, error: error);

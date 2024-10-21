@@ -30,6 +30,7 @@ class Stories extends StatefulWidget {
   final Function(int id, int sroryId)? onWatched;
   final double padding;
   final BaseCacheManager? cacheManager;
+  final Map<String, String>? headers;
 
   const Stories({
     Key? key,
@@ -52,6 +53,7 @@ class Stories extends StatefulWidget {
     this.isPopped = true,
     this.padding = 5,
     this.cacheManager,
+    this.headers,
   }) : super(key: key);
 
   @override
@@ -225,6 +227,7 @@ class _StoriesState extends State<Stories> {
             return OnlyOnePointerRecognizerWidget(
               child: StorySwipe(
                 cacheManager: widget.cacheManager,
+                headers: widget.headers,
                 statusBarColor: widget.statusBarColor,
                 cells: widget.cells,
                 exitButton: widget.exitButton,
@@ -252,6 +255,7 @@ class _StoriesState extends State<Stories> {
             return widget.allowAnimation
                 ? StoryAnimation(
                     cacheManager: widget.cacheManager,
+                    headers: widget.headers,
                     storyCell: widget.cells[initialPage],
                     cells: widget.cells,
                     index: _storiesController.id!,
@@ -328,6 +332,7 @@ class _StoriesState extends State<Stories> {
                               imageUrl: widget.cells[index].iconUrl,
                               fit: BoxFit.contain,
                               cacheManager: widget.cacheManager,
+                              httpHeaders: widget.headers,
                               errorWidget: (context, url, error) {
                                 return Container(
                                     width: double.infinity,

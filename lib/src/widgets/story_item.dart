@@ -18,6 +18,7 @@ class StoryItem extends StatefulWidget {
   final ValueChanged<StoryProcess> onProcess;
   final int globalId;
   final BaseCacheManager? cacheManager;
+  final Map<String, String>? headers;
   // final Function(int id)? onLoading;
   // final Function(int id)? onDownloading;
   // final Function(int id)? onTimeout;
@@ -41,6 +42,7 @@ class StoryItem extends StatefulWidget {
     // this.onTimeout,
     Key? key,
     required this.globalId,
+    this.headers,
   }) : super(key: key);
 
   @override
@@ -65,6 +67,7 @@ class _StoryItemState extends State<StoryItem> {
                 gradientStart: widget.story.gradientStart,
                 gradientEnd: widget.story.gradientEnd,
                 cacheManager: widget.cacheManager,
+                headers: widget.headers,
               ),
             ),
           if (widget.story.meadiaType == MediaType.image)
@@ -79,6 +82,7 @@ class _StoryItemState extends State<StoryItem> {
                 loadingWidget: widget.loadingWidget,
                 onProcess: widget.onProcess,
                 cacheManager: widget.cacheManager,
+                headers: widget.headers,
                 // onReady: widget.onReady,
                 // onLoading: widget.onLoading,
                 // onError: widget.onError,

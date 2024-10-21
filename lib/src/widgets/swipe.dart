@@ -26,6 +26,7 @@ class StorySwipe extends StatefulWidget {
   final StoriesWatchedController? watchedController;
   final bool isPopped;
   final BaseCacheManager? cacheManager;
+  final Map<String, String>? headers;
 
   final Function(int index) scrollToItem;
 
@@ -48,6 +49,7 @@ class StorySwipe extends StatefulWidget {
     this.watchedController,
     required this.isPopped,
     this.cacheManager,
+    this.headers,
   }) : super(key: key);
 
   @override
@@ -68,6 +70,7 @@ class _StorySwipeState extends State<StorySwipe> {
       (i) => StoryScreen(
         id: i,
         cacheManager: widget.cacheManager,
+        headers: widget.headers,
         storyController: widget.storyControllers[i],
         storiesController: widget.storiesController,
         watchedController: widget.watchedController,

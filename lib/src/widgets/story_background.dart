@@ -9,6 +9,7 @@ class StoryBackground extends StatelessWidget {
   final Color? gradientEnd;
   final String? url;
   final BaseCacheManager? cacheManager;
+  final Map<String, String>? headers;
 
   const StoryBackground({
     Key? key,
@@ -17,6 +18,7 @@ class StoryBackground extends StatelessWidget {
     this.gradientStart,
     this.url,
     this.cacheManager,
+    this.headers,
   }) : super(key: key);
 
   @override
@@ -39,6 +41,7 @@ class StoryBackground extends StatelessWidget {
       child: type == StoryBack.image
           ? CachedNetworkImage(
               cacheManager: cacheManager,
+              httpHeaders: headers,
               imageUrl: url ?? '',
               fit: BoxFit.cover,
             )
